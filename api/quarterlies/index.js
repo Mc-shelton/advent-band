@@ -1,6 +1,6 @@
 // import type { VercelRequest, VercelResponse } from '@vercel/node';
 import axios from 'axios';
-import picker from './adapters/picker.js';
+import {picker} from './adapters/picker.js';
 const errorEnums = {
     SERVER: 'internal server error. try again later',
     FIELDS: 'you must provid all the fields',
