@@ -1,0 +1,75 @@
+.discover{
+    padding-left: 5%;
+    padding-right: 5%;
+    background-color:white;
+    border: 2px solid rgb(255, 255, 255);
+}
+.d_search{
+}
+.d_search .search{
+    width: 90%;
+    background-color: rgb(244,244,244);
+    gap: 30px;
+    box-shadow: none;
+}
+.d_search input{
+    background-color: rgb(244,244,244);
+    border: 2px solid red;
+}
+.slid_butts{
+    display: flex;
+    flex-wrap: nowrap;
+    overflow: scroll;
+
+}
+.slid_butts p{
+    font-size: 11px;
+    font-weight: 500;
+    background-color: rgb(244,244,244);
+    padding: 5px;
+    padding-left: 15px;
+    padding-right: 15px;
+    min-width: fit-content;
+    border-radius: 10px;
+    margin-right: 15px;
+
+}
+.ds_container{
+    height:80%;
+    overflow: scroll;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: flex-start;
+    padding-bottom: 10%;
+    width: 100%;
+
+}
+.ds_box{
+    border-radius: 15px;
+    overflow: hidden;
+    height: fit-content;
+    width: 40%;
+    margin-top: 15px;
+}
+.ds_box_ava{
+    height: 150px;
+    background-size: cover;
+    background-position: center;
+    border-radius: 15px;
+}
+.ds_box p{
+    /* font-size: 10px; */
+    font-weight: 500;
+    text-align: left;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin: 0;
+}
+.ds_box_t{
+    font-size: 10px;
+    padding-top: 5px;
+}
+.ds_box_hd{
+    font-size: 15px;
+}

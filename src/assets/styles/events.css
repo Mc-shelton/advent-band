@@ -1,0 +1,48 @@
+.ce_page{
+    overflow: hidden;
+    height: 94%;
+    background-color: white;
+    border-top-right-radius: 30px;
+    border-top-left-radius: 30px;
+    padding-left: 5%;
+    padding-right: 5%;
+}
+.ce_page .ce_card{
+    margin-top: 30px;
+}
+.ce_pd{
+    height: 50%;
+    padding-top: 10px;
+    overflow: scroll;
+}
+.ce_pd_p{
+    margin: 0;
+    text-align: left;
+    font-weight: 300;
+    font-size: 12px;
+}
+.ce_pd .desc{
+    font-size: 14px;
+    font-weight: 400;
+}
+.ce_gal{
+}
+.ce_gal p{
+    font-weight: 500;
+    /* font-size: 13px; */
+    text-align: left;
+    text-decoration: underline;
+}
+.ce_gal_cont {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+
+
+}
+.ce_gal_img{
+    width: 45%;
+    margin-top: 15px;
+
+}

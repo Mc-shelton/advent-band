@@ -1,0 +1,89 @@
+.comm_main{
+    background-color: rgb(244, 244, 244);
+    overflow: hidden;
+}
+.comm_nav{
+    display: flex;
+    flex-wrap: nowrap;
+    overflow: scroll;
+
+}
+.comm_nav p{
+    background-color: #e0e0e0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+    padding-left: 15px;
+    padding-right: 15px;
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: 500;
+    margin-left: 10px;
+}
+.cp_icon{
+    font-size: 20px;
+    margin: 0;
+    margin-right: 5px;
+}
+.comm_events{
+    height: 92%;
+    overflow: scroll;
+    border-top-right-radius: 30px;
+    border-top-left-radius: 30px;
+    background-color: white;
+    padding-bottom: 5%;
+
+}
+.comm_events{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 20px;
+}
+.ce_card{
+    /* border: 1px solid gray; */
+    height: fit-content;
+    /* border-radius: 15px; */
+    width: 100%;
+    overflow: hidden;
+    border-bottom: 1px solid rgba(5, 20, 63, 0.587);
+    margin-top: 20px;
+    padding-bottom: 15px;
+}
+.ce_card_img{
+    border-radius: 15px;
+    height: 130px;
+    background-position: center;
+    background-size: cover;
+}
+.ce_card .ce_p1, .ce_card .ce_p2, .ce_card .ce_p3, .ce_card .ce_p4{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin: 0;
+    font-size: 12px;
+    font-weight: 500;
+    padding-left: 5px;
+}
+.ce_card .ce_p1{
+    margin-top: 10px;
+    font-weight: 300;
+}
+.ce_card .ce_p3{
+    font-weight: 300;
+}
+.ce_card .ce_p4{
+    font-size: 18px;
+}
+
+.comm_titles{
+    margin: 0;
+    font-weight: 600;
+    font-size: 16px;
+    text-align: left;
+    width: 100%;
+    padding-left: 10%;
+    margin-top: 20px;
+}

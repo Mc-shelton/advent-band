@@ -1,0 +1,73 @@
+.bible{
+    border: 2px solid transparent;
+}
+.bcontainer{
+    margin-top: 10%;
+    height: 83%;
+    overflow: scroll;
+    
+}
+.bcontainer h2{
+    font-size: 30px;
+}
+.bcontainer .s1{
+    font-weight: 500;
+    font-size: 16px;
+}
+.bcontainer .p, .q1, .q2{
+    padding: 15px;
+    margin: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.bcontainer .v{
+    font-size: 15px;
+    color: rgb(16, 83, 183);
+    margin-right: 5px;
+}
+.bcontainer  .b{
+    margin: 0;
+}
+.blister{
+    margin-top: 20%;
+    max-height: 78%;
+    overflow: scroll;
+}
+.blister .bible_list{
+    text-align: left;
+    border-bottom: 1px solid rgb(230, 230, 230);
+    padding-bottom: 10px;
+    padding-top: 10px;
+
+}
+ .bibles{
+    font-weight: 450;
+    padding-left: 5%;
+    padding-right: 5%;
+}
+.book {
+    font-weight: 450;
+    padding-left: 5%;
+    padding-right: 5%;
+}
+.book .btitle{
+    text-align: left;
+    border-bottom: 1px solid rgb(230, 230, 230);
+    padding-bottom: 10px;
+}
+.book .chapters{
+    display: flex;
+    flex-wrap: wrap;
+}
+.book .chapters p{
+    background-color:#e0e0e0;
+    padding: 7px;
+    padding-left: 15px;
+    padding-right: 15px;
+    border-radius: 5px;
+    margin: 5px;
+}
+.book .chapters p:hover{
+    cursor: pointer;
+}

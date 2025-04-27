@@ -1,0 +1,11 @@
+.pdf-viewer{
+    top: 0;
+    width: 100%;
+    overflow: scroll;
+    padding: 5px;
+}
+.pdf-page{
+    border: 2px solid red;
+    /* height: 100%; */
+    /* max-width: 100%; */
+}
