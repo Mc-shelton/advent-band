@@ -1,5 +1,6 @@
 // import type { VercelRequest, VercelResponse } from '@vercel/node';
 import axios from 'axios';
+import picker from './adapters/picker.js';
 const errorEnums = {
     SERVER: 'internal server error. try again later',
     FIELDS: 'you must provid all the fields',
@@ -7,13 +8,7 @@ const errorEnums = {
 
 }
 const url = 'https://sabbath-school.adventech.io/api/v2/'
-const picker = (origin, pick) => {
-    const picked = Object.create({});
-    pick.forEach((d) => {
-        picked[d] = origin[d];
-    });
-    return picked;
-};
+
 
 function corsMiddleware(req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
