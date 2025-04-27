@@ -1,9 +1,4 @@
 // import type { VercelRequest, VercelResponse } from '@vercel/node';
-import mysql from 'mysql2/promise';
-import {
-  v4
-} from 'uuid'
-import 'dotenv/config';
 
 function corsMiddleware(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
