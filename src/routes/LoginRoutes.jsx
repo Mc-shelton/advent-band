@@ -5,7 +5,6 @@ import Loadable from '@/components/Loadable';
 import MainLayout from '../layout/MainLayout';
 
 // render - login
-const AuthLogin = Loadable(lazy(() => import('@/pages/authentication/Login')));
 // ==============================|| AUTH ROUTING ||============================== //
 
 const LoginRoutes = {
@@ -14,7 +13,7 @@ const LoginRoutes = {
   children: [
     {
       path: '/',
-      element:<AuthLogin/>
+      element:<div>something</div>
     }
   ]
 };
