@@ -10,7 +10,7 @@ import data from "../../assets/db/n_eng_db.json";
 import { useGiraf } from "../../giraf";
 import dailyBreadImage from "../../assets/images/dailybread.jpeg";
 import { CloseOutlined, ShareOutlined } from "@mui/icons-material";
-import { getDate } from "../../bff/utils";
+import { getDate } from "../../../bff/utils";
 import { ClockCircleOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import PdfViewer from "../viewers/pdfViewer";
