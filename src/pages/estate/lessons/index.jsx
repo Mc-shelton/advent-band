@@ -45,7 +45,7 @@ const LessonBooks = () => {
       >
         <ArrowBackOutlined />
       </div>
-      
+
       <div
         className="lsn_book_splash"
         style={{
@@ -65,9 +65,20 @@ const LessonBooks = () => {
                 onClick={() => {
                   navigate("/viewer/pdf", {
                     state: {
-                        something: "something",
-                        back:'estate',
-                      path: `https://www.adultbiblestudyguide.org/pdf.php?file=${t.end_date.split("/")[2]}:${parseInt(t.path.split("-")[1].split("/")[0]).toString()}Q:SE:PDFs:EAQ${parseInt(t.path.split("-")[1].split("/")[0]).toString()}${t.end_date.split("/")[2].slice(-2)}_${t.path.split("/")[4].padStart(2,"0")}.pdf`,
+                      something: "something",
+                      back: "estate",
+                      src:t.src,
+                      path: `https://www.adultbiblestudyguide.org/pdf.php?file=${
+                        t.end_date.split("/")[2]
+                      }:${parseInt(
+                        t.path.split("-")[1].split("/")[0]
+                      ).toString()}Q:SE:PDFs:EAQ${parseInt(
+                        t.path.split("-")[1].split("/")[0]
+                      ).toString()}${t.end_date
+                        .split("/")[2]
+                        .slice(-2)}_${t.path
+                        .split("/")[4]
+                        .padStart(2, "0")}.pdf`,
                     },
                   });
                 }}

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Document, Page } from "react-pdf";
 import pdf from "../../assets/testData/test.pdf";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useGetApi } from "../../../bff/hooks";
+import { baseUrl, useGetApi } from "../../../bff/hooks";
 import { ArrowBackOutlined, CloseFullscreenOutlined, CloseOutlined, ExpandOutlined, FitScreenOutlined, FullscreenOutlined, MinimizeOutlined, RotateLeftOutlined, ScreenRotationOutlined } from "@mui/icons-material";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 
@@ -48,13 +48,14 @@ function PdfViewer() {
   const [timeoutId, setTimeoutId] = useState(null);
 
   const [scale, setScale] = useState(0.4);
-  const { path, back } = location.state || {
+  const { path,src, back } = location.state || {
     path: "/quarterlies/2023/Q1/2023-Q1.pdf",
   };
   const [loading, setLoading] = useState(false);
   const [pdf, setPdf] = useState(
-    "https://web-pi-two-28.vercel.app/api/quarterlies/pdf?pdfUrl=" + path
+    src
   );
+
   const { actionRequest } = useGetApi();
   // console.log('',path)
   const resetHideControlsTimer = () => {
