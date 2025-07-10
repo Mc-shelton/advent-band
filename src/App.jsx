@@ -106,8 +106,9 @@ function App() {
   useEffect(() => {
     let c = Cookies.get("auth_token");
     let user = c ? jwtDecode(c) : {};
-    if (!user.id) user.id = localStorage.getItem("temp_user_id") || crypto.randomUUID();
-    localStorage.setItem("temp_user_id",user.id)
+    if (!user.id)
+      user.id = localStorage.getItem("temp_user_id") || crypto.randomUUID();
+    localStorage.setItem("temp_user_id", user.id);
     const userActivity = {
       user_id: user.id,
       activity: "app_opened - app",
@@ -139,6 +140,34 @@ function App() {
     onMessage: handleMessage,
   });
   // addGHead("sendMessage", sendMessage);
+
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    // Simulate async startup tasks
+    setTimeout(() => {
+      setReady(true);
+    }, 1500); // Simulate 1.5s loading
+  }, []);
+
+  if (!ready)
+    return (
+      <div
+        className="splash"
+        style={{
+          display: "flex",
+          height: "100%",
+          width: "100%",
+          justifyContent: "center",
+          alignItems: "center",
+          color:'black',
+          fontSize:'12px'
+        }}
+      >
+        Loading App...
+      </div>
+    );
+
   return (
     <ThemeCustomization>
       <ScrollTop>
