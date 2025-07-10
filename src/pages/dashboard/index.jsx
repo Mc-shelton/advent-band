@@ -236,7 +236,9 @@ const getPlayHistory = (id)=>{
             >
               <div className="hs_container">
                 <p className="hs_p1">Did You Know?</p>
-                <p className="hs_p2">{prophecy?.title}</p>
+                <p className="hs_p2" style={{
+                  lineHeight:'25px'
+                }}>{prophecy?.title}</p>
                 <p
                   className="hs_p3"
                   style={{
