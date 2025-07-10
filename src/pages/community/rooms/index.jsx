@@ -1,4 +1,4 @@
-import { AddBusinessOutlined } from "@mui/icons-material";
+import { AddBusinessOutlined, RefreshOutlined } from "@mui/icons-material";
 import "../../../assets/styles/rooms.css";
 import ChatThread from "./thread";
 import { useEffect, useState } from "react";
@@ -9,6 +9,7 @@ import Loading from "../../../components/loading";
 import MessageBox from "../../../components/message";
 import { getDate } from "../../../../bff/lib/utils";
 import JoinRoom from "./joinRoom";
+import { add } from "lodash";
 
 const Rooms = () => {
   const colors = [
@@ -86,8 +87,19 @@ const Rooms = () => {
         <div className="rooms_holder">
           {(!gHead.room_view || gHead.room_view === "room_main") && (
             <>
-              <p className="comm_titles" style={{ paddingLeft: 0 }}>
-                Study Rooms
+              <p className="comm_titles" style={{ paddingLeft: 0, display: "flex", alignItems: "center" }}>
+                <span style={{}}>Study Rooms</span>
+
+                <RefreshOutlined
+                  style={{
+                    fontSize: "30px",
+                    marginLeft: "10px",
+                    height: "20px",
+                  }}
+                  onClick={() => {
+                    addGHead("refresh_rooms", true);
+                  }}
+                />
               </p>
 
               <p style={{ fontWeight: "300", margin: 0, textAlign: "left" }}>

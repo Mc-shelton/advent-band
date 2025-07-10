@@ -41,8 +41,9 @@
 .zoomer_btn {
   background-color: rgb(219, 219, 219);
   padding: 5px;
-  padding-left: 25px;
-  padding-right: 25px;
+  padding-left: 20px;
+  font-size: 10px;
+  padding-right: 20px;
   border-radius: 15px;
   margin-left: 15px;
 }

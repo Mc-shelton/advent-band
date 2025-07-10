@@ -93,6 +93,7 @@ const Discover = () => {
                   state: {
                     back: "discover",
                     path: item.url,
+                    src: `${baseUrl}static/read/pdf?pdfUrl=${item.url}`,
                   },
                 });
               }}

@@ -9,8 +9,8 @@ export const useGroupSocket = ({ onMessage }) => {
   const { gHead, addGHead } = useGiraf();
 
   useEffect(() => {
-    const socket = new WebSocket("ws://localhost:3122");
-    // const socket = new WebSocket("ws://api.adventband.org");
+    // const socket = new WebSocket("ws://localhost:3122");
+    const socket = new WebSocket("wss://api.adventband.org");
     socketRef.current = socket;
     socket.onopen = () => {
       console.log("WebSocket connected");
