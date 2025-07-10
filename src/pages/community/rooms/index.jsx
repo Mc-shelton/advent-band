@@ -132,6 +132,7 @@ const Rooms = () => {
                           addGHead("comm_page", "rooms_main");
                           addGHead("prev_view_key", "room_view");
                           addGHead("prev_view_value", "room_main");
+                          addGHead("notifications", 0);
                         }}
                       >
                         <div
@@ -224,6 +225,7 @@ const Rooms = () => {
                           paddingRight: "10px",
                           borderRadius: "5px",
                           marginLeft: "15%",
+
                         }}
                       >
                         <p

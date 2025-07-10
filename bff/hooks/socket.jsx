@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useGiraf } from "../../src/giraf";
 import Cookies from "js-cookie";
+import { add } from "lodash";
 
 var doneDeals = [];
 export const useGroupSocket = ({ onMessage }) => {
@@ -25,7 +26,7 @@ export const useGroupSocket = ({ onMessage }) => {
 
     socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
-
+      addGHead("notifications", (gHead.notifications || 0) + 1);
       if (
         doneDeals.filter((d) => d.group == data.group && d.content == data.content)
           .length > 0
