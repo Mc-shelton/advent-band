@@ -141,15 +141,35 @@ const getPlayHistory = (id)=>{
         <div className="h_icons">
           <div className="h_ic">
             <BoltIcon className="h_ic_" />
-            <p style={{
+            {/* <p style={{
               fontSize:'12px'
-            }}>2</p>
+            }}>2</p> */}
           </div>
           <div className="h_ic">
             <NotificationsNoneOutlinedIcon className="h_ic_" />
-            <p style={{
-              fontSize:'12px'
-            }}>2</p>
+            {gHead.notifications > 0 && <p>
+              {/* {(() => {
+                let keys = Object.keys(localStorage);
+                let unreadMessages = keys.map((k) => {
+                  console.log(k);
+                  let v = localStorage.getItem(k);
+                  try{
+                  v = v ? JSON.parse(v) : [];
+                  }catch(e){
+                    v = [];
+                  }
+                  if (v[0]?.group) {
+                    let unread = v.filter((i) => i.status != "read" && i.user_id == gHead?.user?.id).length;
+                    return unread;
+                  } else {
+                    return 0;
+                  }
+                });
+                // find total of unread messages
+                return unreadMessages.reduce((a, b) => a + b, 0);
+              })()} */}
+              {gHead.notifications || 0}
+            </p>}
           </div>
         </div>
         <div>
