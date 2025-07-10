@@ -1,0 +1,72 @@
+.lsn_back{
+    background-color: rgb(228, 228, 228);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+    width: 70px;
+    border-radius: 15px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+.lesson_books{
+    overflow: scroll;
+    padding: 4%;
+}
+.lsn_book_splash{
+    height: 40%;
+    border-radius: 15px;
+    background-color: rgb(228, 228, 228);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.lsn_btt{
+    font-weight: 700;
+    font-size: 23px;
+    margin: 0;
+    margin-top: 15px;
+    text-align: left;
+    border-left: 2px solid gray;
+    padding-left: 5%;
+    margin-top: 15%;
+
+}
+.lsn_td{
+    font-weight: 600;
+    text-align: left;
+    font-size: 15px;
+    border-left: 2px solid gray;
+    padding-left: 5%;
+    margin: 0;
+    /* margin-bottom: 7%; */
+
+}
+.lsn_book{
+    display: flex;
+    text-align: left;
+    margin-top: 15px;
+}
+.lsn_book_spash{
+    flex: 1;
+    border-radius: 10px;
+    background-color: rgb(228, 228, 228);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.lsn_book_text{
+    flex: 2;
+    padding-left: 5%;
+}
+.lsn_b_tt{
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0;
+}
+.lsn_b_dd{
+    font-size: 11px;
+    padding-left: 10%;
+    font-weight: 300;
+}

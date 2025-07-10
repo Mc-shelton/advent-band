@@ -256,3 +256,44 @@
     margin-left: 10px;
     height: 100%;
   }
+
+  .play_butt{
+    color: white;
+    font-size:40px;
+  }
+
+.loading_box{
+  border: 1px solid rgb(151, 151, 151);
+  border-radius: 10px;
+  margin-left: 15px;
+  background-color: rgb(237, 237, 237);
+  width: 100px;
+  height: 40px;
+  position: fixed;
+  bottom: 11%;
+  z-index: 20000000000000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.message_box{
+  border: 1px solid gray;
+  background-color: rgb(58, 58, 58);
+  width: fit-content;
+  background-color: red;
+  margin-left: 15px;
+  padding: 15px;
+  border-radius: 10px;
+  color: white;
+  position: fixed;
+  z-index: 20000000000000;
+  bottom: 11%;
+}
+input{
+  background-color: transparent;
+  color: black;
+}
+textarea{
+  background-color: transparent;
+  color: black;
+}

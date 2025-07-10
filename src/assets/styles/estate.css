@@ -43,9 +43,10 @@
 .est_side_lister{
     display: flex;
     justify-content: flex-start;
-    align-items: center;
+    align-items: flex-start;
     flex-wrap: nowrap;
     overflow: scroll;
+
     flex-direction: row;
 }
 .est_side_lister_focused{

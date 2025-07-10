@@ -22,3 +22,21 @@
     align-items: center;
     margin-top: 30%;
 }
+.login_inputs{
+    border: 1px solid gray;
+    outline: none;
+    background-color: white;
+    color: black;
+    height: 35px;
+    width: 220px;
+    border-radius: 10px;
+    padding-left: 15px;
+    padding-right: 15px;
+    margin-bottom:15px ;
+}
+.d{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}

@@ -1,0 +1,179 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["dataProxy", "postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [uuidOssp(map: "uuid-ossp")]
+}
+
+
+model users{
+  id          String        @id @default(dbgenerated("public.uuid_generate_v4()")) @db.Uuid
+  name String
+  email String
+  phone String
+
+  Rooms rooms[]
+  Chats chats[]
+  created_at     DateTime     @default(now())
+}
+
+model items {
+  id          String        @id @default(dbgenerated("public.uuid_generate_v4()")) @db.Uuid
+  name        String
+  price       String
+  inStore     Int           @default(0)
+  description String
+
+  Thumb_nails thumb_nails[]
+  Orders      orderItems[]
+}
+
+model thumb_nails {
+  id      String @id @default(dbgenerated("public.uuid_generate_v4()")) @db.Uuid
+  item_id String @db.Uuid
+  url     String
+  Item    items  @relation(fields: [item_id], references: [id], onDelete: Cascade)
+}
+
+model orders {
+  id             String       @id @default(dbgenerated("public.uuid_generate_v4()")) @db.Uuid
+  order_id       String       @unique
+  customer_email String?
+  contact_phone String?
+
+  created_at     DateTime     @default(now())
+  expires_at     DateTime     @default(now())
+
+  status         orderStatus  @default(PENDING)
+  OrderItems     orderItems[]
+}
+
+model orderItems {
+  id       String          @id @default(dbgenerated("public.uuid_generate_v4()")) @db.Uuid
+  item_id  String          @db.Uuid
+  quantity Int             @default(1)
+  order_id String
+  status   orderItemStatus @default(PENDING)
+  unit String
+
+  Order    orders          @relation(fields: [order_id], references: [order_id])
+  Item     items           @relation(fields: [item_id], references: [id])
+}
+
+model library{
+  id       String          @id @default(dbgenerated("public.uuid_generate_v4()")) @db.Uuid
+  image String
+  title String
+  pages String?
+  author String?
+  type String
+  description String
+  url String
+
+}
+
+model articles{
+  id       String          @id @default(dbgenerated("public.uuid_generate_v4()")) @db.Uuid
+  title String
+  category String
+  avTime String
+  author String?
+  url String
+
+}
+
+model sermons{
+  id       String          @id @default(dbgenerated("public.uuid_generate_v4()")) @db.Uuid
+  title String
+  speaker String
+  avTime String
+  url String
+}
+
+model events{
+  id       String          @id @default(dbgenerated("public.uuid_generate_v4()")) @db.Uuid
+  title String
+  image String
+  description String
+  organizer String
+  location String
+  formLink String?
+  locationPin String?
+  repeat String
+  date DateTime
+
+  Gallary eventsGallary[]
+}
+
+model periodicals{
+  id       String          @id @default(dbgenerated("public.uuid_generate_v4()")) @db.Uuid
+  name String
+  title String
+  type String
+  avTime String
+  url String?
+  content String?
+  forDate DateTime
+}
+
+model eventsGallary{
+  id       String          @id @default(dbgenerated("public.uuid_generate_v4()")) @db.Uuid
+  event_id String  @db.Uuid
+  url String
+
+  Event events @relation(fields:[event_id], references:[id])
+
+}
+model rooms{
+  id       String          @id @default(dbgenerated("public.uuid_generate_v4()")) @db.Uuid
+  owner_id String  @db.Uuid
+  title String
+  ab_title String
+  description String
+  created_at DateTime @default(now())
+  Owner users @relation(fields:[owner_id], references:[id])
+
+  Chats chats[]
+}
+
+model chats{
+  id       String          @id @default(dbgenerated("public.uuid_generate_v4()")) @db.Uuid
+  message String
+  status chatStatus
+  room_id String  @db.Uuid
+  sender_id String  @db.Uuid
+
+  Room rooms @relation(fields:[room_id], references:[id])
+  Sender users @relation(fields:[sender_id],references:[id])
+
+  created_at DateTime @default(now())
+}
+
+
+enum transactionStatus {
+  FAILED
+  PENDING
+  COMPLETE
+}
+
+enum orderItemStatus {
+  PENDING
+  DELIVERED
+}
+
+enum chatStatus {
+  PENDING
+  DELIVERED
+}
+
+enum orderStatus {
+  COMPLETE
+  CANCELED
+  PENDING
+  ACCEPTED
+  DECLINED
+}

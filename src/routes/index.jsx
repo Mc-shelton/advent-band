@@ -14,13 +14,19 @@ export default function ThemeRoutes() {
   const {gHead,addGHead} = useGiraf()
   useEffect(()=>{
     let auth = Cookies.get('AuthToken')
+    let cart = localStorage.getItem("cart")
+    if(cart){
+      addGHead('cart', JSON.parse(cart))
+    }else{
+      addGHead('cart',  [])
+    }
     if(auth){
       addGHead('AuthToken',auth)
       let token = auth.split("Bearer ")[1]
       const user = jwtDecode(token)
-      console.log(user)
       addGHead("AuthUser",user)
       addGHead('Authenticated',true)
+
     }
   },[])
   return useRoutes([MainRoutes]);

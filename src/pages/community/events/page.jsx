@@ -1,8 +1,16 @@
 import RepeatIcon from "@mui/icons-material/Repeat";
-import testImage from "../../../assets/images/dailybread.jpeg";
+import testImage from "../../../assets/images/dailybread.jpg";
 import "../../../assets/styles/events.css";
+import { useGiraf } from "../../../giraf";
+import { useEffect, useState } from "react";
+import { getDate } from "../../../../bff/lib/utils";
 
 const EventPage = () => {
+  const {gHead}= useGiraf()
+  const [event, setEvent] = useState(gHead.focused_event)
+  // useEffect(()=>{
+  //   setEvent(gHead.focused_event)
+  // },[])
   return (
     <div className="ce_page">
       <div className="ce_card">
@@ -12,8 +20,8 @@ const EventPage = () => {
             backgroundImage: `url(${testImage})`,
           }}
         ></div>
-        <p className="ce_p1">Nairobi</p>
-        <p className="ce_p2">14th Fri, April 2025</p>
+        <p className="ce_p1">{event.location}</p>
+        <p className="ce_p2">{getDate(new Date(event.date))}</p>
         <p className="ce_p3">
           <RepeatIcon
             style={{
@@ -21,17 +29,17 @@ const EventPage = () => {
               marginRight: "5px",
             }}
           />{" "}
-          Every 1st Fridady
+          {event.repeat}
         </p>
-        <p className="ce_p4">Street Vesperse - Agha Khan Walk</p>
+        <p className="ce_p4">{event.title}</p>
       </div>
       <div className="ce_pd">
-        <p className="ce_pd_p">Contact : 0741741381</p>
+        <p className="ce_pd_p">Contact : {event.contact}</p>
         <p className="ce_pd_p">
-          Pin : <a href="#">Google Pin</a>
+          Pin : <a href={event.locationPin}>Google Pin</a>
         </p>
         <p className="ce_pd_p">
-          Reserve Here : <a href="https://google.com">Form</a>
+          Reserve Here : <a href={event.formLink}>Form</a>
 
         </p>
         <p
@@ -43,23 +51,28 @@ const EventPage = () => {
           Description
         </p>
         <p className="ce_pd_p desc">
-          Spirit lead me where my trust is without boarders, let me walk upon
-          the waters, wherever you would call me! take me deeper than my feet
-          will ever wander
+          {event.description}
         </p>
         <div className="ce_gal">
             <p>Gallery</p>
             <div className="ce_gal_cont">
-                <img  className="ce_gal_img" src={testImage} onClick={(e)=>{
-                    let position = e.target.style.position
-                    e.target.style.position = position != 'absolute' ? 'absolute' : 'relative'
-                    e.target.style.top = '10%'
-                    e.target.style.width =  position == 'absolute' ? '45%':'100%'
-
-                }}/>
-                <img className="ce_gal_img" src={testImage}/>
-                <img  className="ce_gal_img" src={testImage}/>
-                <img  className="ce_gal_img" src={testImage}/>
+                
+                {event.Gallary.length > 0 ? event.Gallary.map(image=>{
+                  return(
+                    <img  className="ce_gal_img" src={testImage} onClick={(e)=>{
+                      let position = e.target.style.position
+                      e.target.style.position = position != 'absolute' ? 'absolute' : 'relative'
+                      e.target.style.top = '10%'
+                      e.target.style.width =  position == 'absolute' ? '45%':'100%'
+  
+                  }}/>
+                  )
+                })
+                :
+                <p style={{
+                  textDecoration:'none'
+                }}>no images for this event</p>
+              }
             </div>
         </div>
       </div>

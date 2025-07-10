@@ -58,12 +58,13 @@ const Community = () => {
         </div>
         <div>
           <CButton
-            text={"Sign In"}
+            text={gHead.user ? gHead.user.name ? gHead.user.name[0]:  gHead.user.email[0] :  "Sign In"}
             onClick={() => {
               addGHead("login", true);
             }}
             style={{
               marginLeft: "15%",
+              fontWeight: gHead.user? '700' : '400',
               fontSize: "12px",
               paddingLeft: "18px",
               paddingRight: "18px",

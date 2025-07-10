@@ -33,6 +33,7 @@
     margin-top: 20%;
     max-height: 78%;
     overflow: scroll;
+    padding-top: 10%;
 }
 .blister .bible_list{
     text-align: left;

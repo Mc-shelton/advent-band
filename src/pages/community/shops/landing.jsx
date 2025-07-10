@@ -1,25 +1,25 @@
-import testImage from '../../../assets/images/dailybread.jpeg'
+import testImage from '../../../assets/images/dailybread.jpg'
 import { useGiraf } from '../../../giraf'
 
-const ShopLanding = ()=>{
-    const testArray = [1,2,3,4,5,5,6,7,8]
+const ShopLanding = ({items})=>{
     const {gHead, addGHead} = useGiraf()
     return(
         <div className="s_landing">
-            {testArray.map(l=>{
+            {items.map(item=>{
                 return(
-                    <div className="shops_card" onClick={()=>{
+                    <div className="shops_card" key={item.id} onClick={()=>{
                         addGHead("shop_view", "itemView")
                         let prev = gHead.comm_page_prev || [];
                         addGHead("comm_page_prev", [...prev,'shop_main'])
                         addGHead("prev_view_key", 'shop_view')
                         addGHead("prev_view_value", 'landing')
+                        addGHead("focused_item", item)
                     }}>
                         <div className='sc_ava' style={{
                             backgroundImage:`url(${testImage})`
                         }}></div>
-                        <p className='sc_p1'>Natural Honey From Kakamega</p>
-                        <p className='sc_p2'>Ksh 800 - 3000</p>
+                        <p className='sc_p1'>{item.name}</p>
+                        <p className='sc_p2'>Ksh {item.price}</p>
                     </div>
                 )
             })}

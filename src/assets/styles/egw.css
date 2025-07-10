@@ -1,0 +1,63 @@
+.egw_viewer{
+    /* border: 2px solid red; */
+    padding: 5%;
+    overflow: scroll;
+
+}
+.reader{
+    height: 94%;
+    overflow: scroll;
+}
+.refcode{
+    display: none;
+}
+/* .showitem::first-letter {
+    text-transform: uppercase;
+  } */
+.showitem{
+    text-align: left;
+    /* text-transform: lowercase; */
+    margin-top: 15px;
+    font-size: 15px;
+    /* border: 2px solid red; */
+}
+.reference {
+    font-size: 10px;
+    /* display: none; */
+}
+.pagenumber {
+    font-weight: 600;
+    display: block;
+    text-align: center;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+.top_line{
+    border-top: 1px solid gray;
+    margin-bottom: 15px;
+}
+.bible-kjv{
+    color: rgb(30, 30, 147);
+}
+.h1{
+    font-weight: 600;
+    text-align: center;
+    font-size: 35px;
+    
+}
+.h3{
+    font-weight: 500;
+    text-align: center;
+    font-size: 25px;
+}
+
+.bookendnote{
+    font-size: 11px;
+    display: inline;
+
+  }
+  .footnoteTooltip{
+    font-size: 12px;
+    display: inline;
+    display: none;
+  }

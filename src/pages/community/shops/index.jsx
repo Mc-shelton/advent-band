@@ -17,11 +17,44 @@ import {
 import ItemView from "./itemView";
 import CartView from "./cartView";
 import OrderView from "./orderView";
+import { baseUrl, useGetApi } from "../../../../bff/hooks";
+import Loading from "../../../components/loading";
+import MessageBox from "../../../components/message";
 const Shops = () => {
   const [searchText, setSearchText] = useState();
   const { gHead, addGHead } = useGiraf();
   const [showMenu, setShowMenu] = useState(false);
 
+  const {actionRequest} = useGetApi()
+  const [loading, setLoading] = useState();
+  const [message, setMessage] = useState();
+  const [messageType, setMessageType] = useState("");
+  const [items, setItems] = useState([])
+
+
+
+  const pushMessage = (m, t) => {
+    setMessageType(t);
+    setMessage((k) => {
+      let i = m;
+      setTimeout(() => {
+        setMessage((p) => null);
+      }, 3000);
+      return i;
+    });
+  };
+
+
+  useEffect(()=>{
+    setLoading(true)
+    actionRequest({endPoint:`${baseUrl}shops/items`}).then((res)=>{
+      setItems(res.data)
+    }).catch((err)=>{
+      pushMessage(err.message, 'error')
+    }).finally(()=>{
+      setLoading(false)
+    })
+  },[])
   useEffect(() => {
     if (!gHead.shop_view) {
       addGHead("shop_view", "landing");
@@ -39,6 +72,10 @@ const Shops = () => {
   };
   return (
     <div className="comm_events shops_page">
+      {loading && <Loading />}
+      {message && (
+        <MessageBox txt={message} type={messageType} key={"some key"} />
+      )}
       {!gHead.shop_view || gHead.shop_view == 'landing' && <p
         className="comm_titles"
         style={{
@@ -130,7 +167,7 @@ const Shops = () => {
         </div>
       )}
 
-      {gHead.shop_view == "landing" && <ShopLanding />}
+      {gHead.shop_view == "landing" && <ShopLanding  items={items}/>}
       {gHead.shop_view == "itemView" && <ItemView />}
       {gHead.shop_view == "cartView" && <CartView />}
       {gHead.shop_view == "orderView" && <OrderView />}

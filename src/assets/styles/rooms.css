@@ -2,7 +2,9 @@
   overflow: scroll;
   padding: 0;
 }
-
+.rooms_holder{
+  width: 90%;
+}
 .cr_float_butt {
   position: absolute;
   right: 10%;
@@ -17,17 +19,17 @@
   align-items: center;
 }
 .cr_card {
-  border: 1px solid rgb(46, 77, 117);
+  /* border: 1px solid rgba(46, 77, 117, 0.175); */
   width: 100%;
   border-radius: 15px;
   display: flex;
   justify-content: flex-start;
   padding: 15px;
+  padding-top: 0;
+  padding-bottom: 0;
   overflow: hidden;
   align-items: center;
-  margin-top: 15px;
-  margin-left: 20px;
-  margin-right: 20px;
+  margin-top: 10px;
 }
 .cr_avator {
   display: flex;
@@ -37,6 +39,7 @@
   border-radius: 100%;
   min-height: 50px;
   min-width: 50px;
+  border: 1px solid rgb(46, 77, 117);
   font-weight: 700;
   color: white;
 }
@@ -114,6 +117,7 @@
 .chat-desc {
   position: absolute;
   background-color: white;
+  min-width: 80%;
   border-radius: 15px;
   top: 23%;
   border: 1px solid rgb(186, 186, 186);
@@ -221,6 +225,8 @@
 .cr_create_room {
   padding-top: 20%;
   color: rgb(0, 33, 65);
+  margin-left: 10%;
+  margin-right: 10%;
 }
 .cr_create_room .cr_hd {
   font-weight: 600;
@@ -254,4 +260,50 @@
   padding: 10px;
   color: rgb(0, 33, 65);
   margin-top: 20px;
+}
+
+.cr_join_room {
+  background-color: #9191912d;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 0 ;
+  left: 0;
+}
+.cr_j_container{
+  height: fit-content;
+  width: 80%;
+  background-color: white;
+  border-radius: 15px;
+  padding: 5%;
+}
+.cr_cr_h{
+  font-size: 17px;
+  font-weight: 500;
+}
+.cr_cr_hl{
+  line-height: 5px;
+  font-size: 12px;
+  color: rgba(0, 33, 65, 0.772);
+  text-align: left;
+  margin-left: 20%;
+}
+.cr_butts{
+  display: flex;
+  gap: 10%;
+  justify-content: center;
+  align-items: center;
+}
+.cr_butts p{
+  border: 1px solid rgb(0, 33, 65);
+  border-radius: 10px;
+  padding: 10px;
+  color: rgb(0, 33, 65);
+  margin-top: 20px;
+  line-height: 15px;
+  padding-left: 20px;
+  padding-right: 20px;
 }

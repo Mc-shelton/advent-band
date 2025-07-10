@@ -1,15 +1,96 @@
 import { SearchOutlined } from "@mui/icons-material";
 import "../../assets/styles/estate.css";
 import { useGiraf } from "../../giraf";
-import { useState } from "react";
-import testImage from "../../assets/images/dailybread.jpeg";
+import { useEffect, useState } from "react";
+import testImage from "../../assets/images/dailybread.jpg";
 import { ArrowLeftOutlined, ArrowRightOutlined } from "@ant-design/icons";
+import useAxios from "../../hooks/useAxios";
+import { baseUrl, useGetApi } from "../../../bff/hooks";
+import { useNavigate } from "react-router-dom";
+import egwLogo from '../../assets/images/egw_logo.png'
+import pioneers from '../../assets/images/pioneers.jpeg'
+import testPdf from '../../assets/testData/test.pdf'
+
 const Estate = () => {
   const { gHead, addGHead } = useGiraf();
   const [searchText, setSearchText] = useState();
   const testList = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
   const [focused, setFocused] = useState();
+  const [lesson, setLesson] = useState([]);
   const [switchMenus, setSwitchmenus] = useState(false);
+  const { actionRequest } = useGetApi();
+  const [egw, setEgw] = useState([]);
+  const [library, setLirary] = useState([])
+  const [loading, setLoading] = useState(false);
+  const [pioneer, setPioneer] = useState([])
+
+  const navigate = useNavigate();
+  useEffect(() => {
+    setLoading(true);
+    actionRequest({
+      endPoint: `${baseUrl}estate/pioneers`,
+      params: {},
+    })
+      .then((res) => {
+        console.log(res);
+        setPioneer(res.data)
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+    actionRequest({
+      endPoint: `${baseUrl}estate/quarterlies`,
+      params: {},
+    })
+      .then((res) => {
+        console.log(res);
+        setLesson(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+
+    actionRequest({
+      endPoint: `${baseUrl}estate/egw`,
+      params: {},
+    })
+      .then((res) => {
+        let engFolder = res.data?.find((item) =>
+          item.title.toLowerCase().includes("eng")
+        );
+        let egwWrittigns = engFolder?.children.find((item) =>
+          item.title.toLowerCase().includes("egw")
+        );
+        setEgw(egwWrittigns?.children);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+
+    actionRequest({
+      endPoint: `${baseUrl}periodicals/books`,
+      params: {},
+    })
+      .then((res) => {
+       setLirary(res.data)
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
+
   return (
     <div className="nav_page estate">
       <p className="d_tt">ABC Estate</p>
@@ -94,51 +175,66 @@ const Estate = () => {
           }`}
           style={
             focused && focused == "egw"
-              ? 
-              
-              {
-                display: "flex",
-                height: "93%",
-                flexWrap: "wrap",
-                maxWidth: "100%",
-                justifyContent: "space-around",
-                alignItems: "flex-start",
-                overflow: "scroll",
-                flexDirection: "row",
-              }
-              : 
-              focused ? {
-                display:'none'
-              }:
-              {
-                display: "flex",
-                //   border:'1px solid red',
-                justifyContent: "flex-start",
-                alignItems: "center",
-                flexWrap: "nowrap",
-                overflow: "scroll",
-                flexDirection: "row",
-              }
+              ? {
+                  display: "flex",
+                  height: "93%",
+                  flexWrap: "wrap",
+                  maxWidth: "100%",
+                  justifyContent: "space-around",
+                  alignItems: "flex-start",
+                  overflow: "scroll",
+                  flexDirection: "row",
+                }
+              : focused
+              ? {
+                  display: "none",
+                }
+              : {
+                  display: "flex",
+                  //   border:'1px solid red',
+                  justifyContent: "flex-start",
+                  alignItems: "center",
+                  flexWrap: "nowrap",
+                  overflow: "scroll",
+                  flexDirection: "row",
+                }
           }
         >
-          {testList.map((item, index) => {
-            return (
-              <div className="est_side_lister_item focused" key={index}>
+          {egw.length > 0 ? (
+            egw.map((item, index) => {
+              return (
                 <div
-                  className="est_side_lister_item_img"
-                  style={{
-                    backgroundImage: `url(${testImage})`,
+                  className="est_side_lister_item focused"
+                  key={index}
+                  onClick={() => {
+                    // alert()
+                    navigate(`/estate/egw`, {
+                      state: {
+                        splash: item.title || 'splash',
+                        title: item.title || 'title',
+                        url: item.key,
+                      },
+                    });
                   }}
-                ></div>
-                <div className="est_side_lister_item_text">
-                  <p className="est_side_lister_item_text_hd">EGW Estate</p>
-                  <p className="est_side_lister_item_text_sub">
-                    Lorem ipsum dolor sit amet,
-                  </p>
+                >
+                  <div
+                    className="est_side_lister_item_img"
+                    style={{
+                      backgroundImage: `url(${egwLogo})`,
+                    }}
+                  ></div>
+                  <div className="est_side_lister_item_text">
+                    <p className="est_side_lister_item_text_hd">{item.title}</p>
+                    <p className="est_side_lister_item_text_sub">
+                      {item.urltype} : EGW {item.addClass}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })
+          ) : (
+            <div>{loading ? <p>Loading...</p> : <p>No data found</p>}</div>
+          )}
         </div>
 
         {/* ######################### */}
@@ -194,47 +290,58 @@ const Estate = () => {
           }`}
           style={
             focused && focused == "pioneer"
-              ? 
-              
-              {
-                // border:'1px solid blue',
-                display: "flex",
-                height: "93%",
-                flexWrap: "wrap",
-                maxWidth: "100%",
-                justifyContent: "space-around",
-                alignItems: "flex-start",
-                overflow: "scroll",
-                flexDirection: "row",
-              }
-              : 
-              focused ? {
-                display:'none'
-              }:
-              {
-                display: "flex",
-                //   border:'1px solid red',
-                justifyContent: "flex-start",
-                alignItems: "center",
-                flexWrap: "nowrap",
-                overflow: "scroll",
-                flexDirection: "row",
-              }
+              ? {
+                  // border:'1px solid blue',
+                  display: "flex",
+                  height: "93%",
+                  flexWrap: "wrap",
+                  maxWidth: "100%",
+                  justifyContent: "space-around",
+                  alignItems: "flex-start",
+                  overflow: "scroll",
+                  flexDirection: "row",
+                }
+              : focused
+              ? {
+                  display: "none",
+                }
+              : {
+                  display: "flex",
+                  //   border:'1px solid red',
+                  justifyContent: "flex-start",
+                  alignItems: "center",
+                  flexWrap: "nowrap",
+                  overflow: "scroll",
+                  flexDirection: "row",
+                }
           }
         >
-          {testList.map((item, index) => {
+          {pioneer.map((item, index) => {
             return (
               <div className="est_side_lister_item focused" key={index}>
                 <div
+                key={index}
                   className="est_side_lister_item_img"
                   style={{
-                    backgroundImage: `url(${testImage})`,
+                    backgroundImage: `url(${pioneers})`,
+                  }}
+                  onClick={() => {
+                    // alert()
+                    navigate(`/estate/egw`, {
+                      state: {
+                        splash: item.title || 'splash',
+                        title: item.title || 'title',
+                        url: item.key,
+                      },
+                    });
                   }}
                 ></div>
                 <div className="est_side_lister_item_text">
-                  <p className="est_side_lister_item_text_hd">Pioneers Estate</p>
+                  <p className="est_side_lister_item_text_hd">
+                    {item.title}
+                  </p>
                   <p className="est_side_lister_item_text_sub">
-                    Lorem ipsum dolor sit amet,
+                    {item.urltype}
                   </p>
                 </div>
               </div>
@@ -243,7 +350,7 @@ const Estate = () => {
         </div>
 
         {/* ######################### */}
-        
+
         {!switchMenus ? (
           <div
             className="est_long_hd"
@@ -295,37 +402,44 @@ const Estate = () => {
           }`}
           style={
             focused && focused == "abc"
-              ? 
-
-              {
-                display: "flex",
-                height: "93%",
-                flexWrap: "wrap",
-                maxWidth: "100%",
-                justifyContent: "space-around",
-                alignItems: "flex-start",
-                overflow: "scroll",
-                flexDirection: "row",
-              }
-              : 
-              focused ? {
-                display:'none'
-              }:
-
-              {
-                display: "flex",
-                //   border:'1px solid red',
-                justifyContent: "flex-start",
-                alignItems: "center",
-                flexWrap: "nowrap",
-                overflow: "scroll",
-                flexDirection: "row",
-              }
+              ? {
+                  display: "flex",
+                  height: "93%",
+                  flexWrap: "wrap",
+                  maxWidth: "100%",
+                  justifyContent: "space-around",
+                  alignItems: "flex-start",
+                  overflow: "scroll",
+                  flexDirection: "row",
+                }
+              : focused
+              ? {
+                  display: "none",
+                }
+              : {
+                  display: "flex",
+                  //   border:'1px solid red',
+                  justifyContent: "flex-start",
+                  alignItems: "center",
+                  flexWrap: "nowrap",
+                  overflow: "scroll",
+                  flexDirection: "row",
+                }
           }
         >
-          {testList.map((item, index) => {
+          {library.map((item, index) => {
             return (
-              <div className="est_side_lister_item focused" key={index}>
+              <div className="est_side_lister_item focused" key={index} 
+              onClick={()=>{
+                navigate("/viewer/pdf",{
+                  state: {
+                    something: "something",
+                    back:'estate',
+                  path: testPdf,
+                },
+                })
+              }}
+              >
                 <div
                   className="est_side_lister_item_img"
                   style={{
@@ -333,9 +447,9 @@ const Estate = () => {
                   }}
                 ></div>
                 <div className="est_side_lister_item_text">
-                  <p className="est_side_lister_item_text_hd">ABC Library</p>
+                  <p className="est_side_lister_item_text_hd">{item.title}</p>
                   <p className="est_side_lister_item_text_sub">
-                    Lorem ipsum dolor sit amet,
+                    By : {item.author}
                   </p>
                 </div>
               </div>
@@ -344,7 +458,7 @@ const Estate = () => {
         </div>
 
         {/* ######################### */}
-        
+
         {!switchMenus ? (
           <div
             className="est_long_hd"
@@ -396,56 +510,68 @@ const Estate = () => {
           }`}
           style={
             focused && focused == "local"
-              ? 
-
-              {
-                display: "flex",
-                height: "93%",
-                flexWrap: "wrap",
-                maxWidth: "100%",
-                justifyContent: "space-around",
-                alignItems: "flex-start",
-                overflow: "scroll",
-                flexDirection: "row",
-              }
-              : 
-              focused ? {
-                display:'none'
-              }:
-
-              {
-                display: "flex",
-                //   border:'1px solid red',
-                justifyContent: "flex-start",
-                alignItems: "center",
-                flexWrap: "nowrap",
-                overflow: "scroll",
-                flexDirection: "row",
-              }
+              ? {
+                  display: "flex",
+                  height: "93%",
+                  flexWrap: "wrap",
+                  maxWidth: "100%",
+                  justifyContent: "space-around",
+                  alignItems: "flex-start",
+                  overflow: "scroll",
+                  flexDirection: "row",
+                }
+              : focused
+              ? {
+                  display: "none",
+                }
+              : {
+                  display: "flex",
+                  //   border:'1px solid red',
+                  justifyContent: "flex-start",
+                  alignItems: "center",
+                  flexWrap: "nowrap",
+                  overflow: "scroll",
+                  flexDirection: "row",
+                }
           }
         >
-          {testList.map((item, index) => {
-            return (
-              <div className="est_side_lister_item focused" key={index}>
+          {lesson.length > 0 ? (
+            lesson.map((item, index) => {
+              return (
                 <div
-                  className="est_side_lister_item_img"
-                  style={{
-                    backgroundImage: `url(${testImage})`,
+                  className="est_side_lister_item focused"
+                  key={index}
+                  onClick={() => {
+                    navigate(`/estate/lessons`, {
+                      state: {
+                        splash: item.splash,
+                        title: item.title,
+                        path: item.path,
+                      },
+                    });
                   }}
-                ></div>
-                <div className="est_side_lister_item_text">
-                  <p className="est_side_lister_item_text_hd">Local Listing</p>
-                  <p className="est_side_lister_item_text_sub">
-                    Lorem ipsum dolor sit amet,
-                  </p>
+                >
+                  <div
+                    className="est_side_lister_item_img"
+                    style={{
+                      backgroundImage: `url(${item.cover})`,
+                    }}
+                  ></div>
+                  <div className="est_side_lister_item_text">
+                    <p className="est_side_lister_item_text_hd">{item.title}</p>
+                    <p className="est_side_lister_item_text_sub">
+                      {item.path.split("/").join(" ")}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })
+          ) : (
+            <div>{loading ? <p>Loading...</p> : <p>No data found</p>}</div>
+          )}
         </div>
 
         {/* ######################### */}
-        
       </div>
     </div>
   );

@@ -4,12 +4,35 @@ import {
   KeyboardArrowRightOutlined,
   KeyboardArrowUpOutlined,
 } from "@mui/icons-material";
-import testImage from "../../../assets/images/dailybread.jpeg";
+import testImage from "../../../assets/images/dailybread.jpg";
 import { useState } from "react";
+import { useGiraf } from "../../../giraf";
+import MessageBox from "../../../components/message";
 const ItemView = () => {
+  const {gHead, addGHead} = useGiraf()
+  const [item, setItem] = useState(gHead.focused_item)
   const [startX, setStartX] = useState(null);
   const testImages = [testImage, testImage, testImage, testImage, testImage]
   const [imageIndex, setImageIndex] = useState(parseInt(testImages.length/2))
+  const [quantity, setQueantity] = useState(1)
+
+
+  const [message, setMessage] = useState();
+  const [messageType, setMessageType] = useState("");
+
+
+
+  const pushMessage = (m, t) => {
+    setMessageType(t);
+    setMessage((k) => {
+      let i = m;
+      setTimeout(() => {
+        setMessage((p) => null);
+      }, 3000);
+      return i;
+    });
+  };
+
 
   const handleTouchStart = (e) => {
     setStartX(e.touches[0].clientX);
@@ -56,6 +79,9 @@ const ItemView = () => {
 
   return (
     <div className="item_view">
+      {message && (
+        <MessageBox txt={message} type={messageType} key={"some key"} />
+      )}
       <div
         className="item_view_image"
         style={{
@@ -82,32 +108,35 @@ const ItemView = () => {
       </div>
       <div className="b_butts">
         <p>Qnt :</p>
-        <select>
-            <option>0.1</option>
-            <option>0.5</option>
-            <option>0.7</option>
-        </select>
-        <p>Ksh 800</p>
-        <div className="t_butt">Add to cart</div>
-      </div>
-      <p className="item_tt">Honey From Maasai Land</p>
-      <p className="item_dt">Description</p>
-      <p className="item_d">Just a lot of stuff concerning this item
-      Just a lot of stuff concerning this item
-      Just a lot of stuff concerning this item
-      Just a lot of stuff concerning this item
-      Just a lot of stuff concerning this item
+        <input type="number" value={quantity} onChange={(e)=>{setQueantity(e.target.value)}} placeholder="1" style={{
+          border:'1px solid gray',
+          outline:"none",
+          borderRadius:'5px',
+          width:"35px",
+          textAlign:'center'
 
-      Just a lot of stuff concerning this itemJust a lot of stuff concerning this item
-      Just a lot of stuff concerning this item
+        }}/>
+        <p>Ksh {item.price}</p>
+        <div className="t_butt" onClick={()=>{
+          let ex = gHead.cart
+          let cItem = item
+          cItem.quantity = quantity
+          ex.filter(l=>l.id == item.id).length < 1 &&  ex.push(cItem)
+          pushMessage("item added to cart", 'success')
+          localStorage.setItem('cart', JSON.stringify(ex))
+        }}>Add to cart</div>
+      </div>
+      <p className="item_tt">{item.name}</p>
+      <p className="item_dt">Description</p>
+      <p className="item_d">{item.description}
       </p>
       <br/>
       <p className="item_dt">Mentions</p>
       <div className="item_mentions">
-        <p>1. Book | Title of some article</p>
-        <p>2. Book | Title of some article</p>
+        <p>comming soom...</p>
+        {/* <p>2. Book | Title of some article</p>
         <p>3. Article | Title of some article</p>
-        <p>4. Article | Title of some article</p>
+        <p>4. Article | Title of some article</p> */}
       </div>
       <br/>
       <br/>

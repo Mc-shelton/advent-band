@@ -113,11 +113,14 @@
 }
 
 .hs_2{
-    display: flex;
     padding-top: 15px;
     padding-left: 15px;
     padding-right: 10px;
     padding-bottom: 15px;
+}
+.hs_2_holder{
+    display: flex;
+
 }
 .hs_2_p1, .hs_2_p2, .hs_2_p3{
     text-align: left;
@@ -147,6 +150,7 @@
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
+    overflow: hidden;
 }
 
 
@@ -163,13 +167,15 @@
 .d_holder{
     border-radius: 15px;
     background-color: white;
-    height: 150px;
-    display: flex;
     padding: 15px;
-    gap: 15px;
     margin-top: 10px;
 }
+.d_holder_cont{
+    display: flex;
+    gap: 15px;
+    overflow: hidden;
 
+}
 .dc_p1{
     font-weight: 600;
     font-size: 15px;
@@ -182,9 +188,23 @@
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    overflow: hidden;
 }
-
+.d_av_overlay{
+    background-color: rgba(0, 0, 0, 0.283);
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 .d_cont{
     flex: 6;
     padding-left: 15px;
+}
+.player_cont{
+    align-self: baseline;
+    margin-top: 15px;
+}
+.player_cont input{
+    background-color: red;
 }

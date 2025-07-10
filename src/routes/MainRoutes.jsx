@@ -13,6 +13,11 @@ import Remedies from '../pages/discover/remedies';
 import Community from '../pages/community';
 import Estate from '../pages/estate';
 import PdfViewer from '../pages/viewers/pdfViewer';
+import LessonBooks from '../pages/estate/lessons';
+import Uploader from '../pages/loader';
+import EpubReader from '../pages/viewers/epubViewer';
+import FolderBooks from '../pages/estate/egw';
+import EgwViewer from '../pages/viewers/egwViewer';
 // render - dashboard
 // const DashboardDefault = Loadable(lazy(() => import('@/pages/dashboard')));
 // const LoginScreen = Loadable(lazy(() => import('@/pages/authentication/login/index.jsx')));
@@ -28,6 +33,10 @@ const MainRoutes = {
       element:<DashboardDefault/>
     },
     {
+      path:'loader', 
+      element:<Uploader/>
+    },
+    {
       path: '/hymns',
       element:<Hymns/>
     },
@@ -41,7 +50,38 @@ const MainRoutes = {
     },
     {
       path: '/estate',
-      element:<Estate/>
+      // element:<Estate/>,
+      children:[
+        {
+          path:'/estate',
+          element:<Estate/>
+        },
+        {
+          path: '/estate/egw',
+          element:<FolderBooks/>
+        },
+        {
+          path: '/estate/lessons',
+          element:<LessonBooks/>
+        }
+      ]
+    },
+    {
+      path:'/viewer',
+      children:[
+        {
+          path:'/viewer/pdf',
+          element:<PdfViewer/>
+        },
+        {
+          path:'/viewer/egw',
+          element:<EgwViewer/>
+        }
+      ]
+    },
+    {
+      path:'pubViewer',
+      element:<EpubReader/>
     },
     {
       path: '/remedies',
