@@ -17,7 +17,7 @@ const EventPage = () => {
         <div
           className="ce_card_img"
           style={{
-            backgroundImage: `url(${testImage})`,
+            backgroundImage: `url(${event.image})`,
           }}
         ></div>
         <p className="ce_p1">{event.location}</p>
@@ -34,14 +34,14 @@ const EventPage = () => {
         <p className="ce_p4">{event.title}</p>
       </div>
       <div className="ce_pd">
-        <p className="ce_pd_p">Contact : {event.contact}</p>
-        <p className="ce_pd_p">
+        {event.contact && <p className="ce_pd_p">Contact : {event.contact}</p>}
+        {event.locationPin && <p className="ce_pd_p">
           Pin : <a href={event.locationPin}>Google Pin</a>
-        </p>
-        <p className="ce_pd_p">
+        </p>}
+        {event.formLink && <p className="ce_pd_p">
           Reserve Here : <a href={event.formLink}>Form</a>
 
-        </p>
+        </p>}
         <p
           className="ce_pd_p"
           style={{

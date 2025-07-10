@@ -175,7 +175,10 @@ const bottomRef = useRef(null);
           }}
           
           onKeyDown={(e) => {
-            if (e.key === "Enter") handleSendMessage();
+            if (e.key === "Enter"){
+               handleSendMessage();
+              addGHead("keyboard", undefined);
+              }
           }}
         />
         <div className="icon-button" onClick={handleSendMessage}>

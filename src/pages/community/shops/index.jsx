@@ -96,12 +96,22 @@ const Shops = () => {
         <div
           className="flm_butts"
           onClick={() => {
+            addGHead("is_added_to_cart", false)
             setShowMenu((t) => {
               if (t) return false;
               return true;
             });
           }}
         >
+          {gHead.is_added_to_cart && <div style={{
+            border:'2px solid brown',
+            position:'absolute',
+            backgroundColor:'brown',
+            height:'10px',
+            width:'10px',
+            borderRadius:'100%',
+            marginLeft:'10px'
+          }}></div>}
           {!showMenu ? <MenuOutlined /> : <CloseOutlined />}
         </div>
         {showMenu && (

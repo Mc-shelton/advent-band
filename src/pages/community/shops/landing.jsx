@@ -16,7 +16,7 @@ const ShopLanding = ({items})=>{
                         addGHead("focused_item", item)
                     }}>
                         <div className='sc_ava' style={{
-                            backgroundImage:`url(${testImage})`
+                            backgroundImage:`url(${item.image_url})`
                         }}></div>
                         <p className='sc_p1'>{item.name}</p>
                         <p className='sc_p2'>Ksh {item.price}</p>

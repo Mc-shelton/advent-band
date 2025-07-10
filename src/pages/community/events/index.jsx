@@ -68,7 +68,7 @@ const Events = () => {
         <div
           className="ce_card_img"
           style={{
-            backgroundImage: `url(${testImage})`,
+            backgroundImage: `url(${event.image})`,
           }}
         ></div>
         <p className="ce_p1">{event.organizer}, {event.location}</p>

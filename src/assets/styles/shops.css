@@ -30,9 +30,18 @@
 .sc_p1,
 .sc_p2 {
   text-align: left;
+  /* line-height: 5px; */
+  text-wrap: nowrap;
+  margin-bottom: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
 }
 .sc_p2 {
   font-weight: 700;
+  font-size: 12px;
+  margin-top: 0;
+
   color: rgb(190, 123, 0);
 }
 .floating_menu {

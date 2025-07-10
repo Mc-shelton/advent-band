@@ -90,15 +90,15 @@ const OrderView = () => {
                               )
                             }
                             style={{ width: "50px", marginLeft: "10px" }}
-                            onFocus={() => {
-                              addGHead("keyboard", true);
-                            }}
-                            onBlur={() => {
-                              setTimeout(() => {
-                                addGHead("keyboard", undefined);
-                              }, 100);
-                              console.log("onblure");
-                            }}
+                            // onFocus={() => {
+                            //   addGHead("keyboard", true);
+                            // }}
+                            // onBlur={() => {
+                            //   setTimeout(() => {
+                            //     addGHead("keyboard", undefined);
+                            //   }, 100);
+                            //   console.log("onblure");
+                            // }}
                           />
                         </label>
                         {/* <div
