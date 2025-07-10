@@ -15,7 +15,7 @@
 .logo{
     background-size: cover;
     background-repeat: no-repeat;
-    background-image: url('../images/logo.png');
+    background-image: url('../images/logo.jpg');
     height: 200px;
     width: 200px;
 }
@@ -194,7 +194,7 @@
   }
   .p_header p{
     font-weight: 500;
-    font-size: 20px;
+    font-size: 16px;
     color: #636363;
     margin-left: 5%;
 
@@ -221,6 +221,9 @@
     margin-left: 10px;
     text-wrap: nowrap;
   }
+.p_h_ic{
+  font-size: 5px;
+}
   .h_icons .h_ic_{
     font-size: 25px;
     font-weight: 500;

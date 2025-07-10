@@ -106,7 +106,8 @@ function App() {
   useEffect(() => {
     let c = Cookies.get("auth_token");
     let user = c ? jwtDecode(c) : {};
-    if (!user.id) user.id = crypto.randomUUID();
+    if (!user.id) user.id = localStorage.getItem("temp_user_id") || crypto.randomUUID();
+    localStorage.setItem("temp_user_id",user.id)
     const userActivity = {
       user_id: user.id,
       activity: "app_opened - app",

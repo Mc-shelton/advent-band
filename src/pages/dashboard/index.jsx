@@ -141,11 +141,15 @@ const getPlayHistory = (id)=>{
         <div className="h_icons">
           <div className="h_ic">
             <BoltIcon className="h_ic_" />
-            <p>2</p>
+            <p style={{
+              fontSize:'12px'
+            }}>2</p>
           </div>
           <div className="h_ic">
             <NotificationsNoneOutlinedIcon className="h_ic_" />
-            <p>2</p>
+            <p style={{
+              fontSize:'12px'
+            }}>2</p>
           </div>
         </div>
         <div>
