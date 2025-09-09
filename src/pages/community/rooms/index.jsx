@@ -1,7 +1,7 @@
 import { AddBusinessOutlined, RefreshOutlined } from "@mui/icons-material";
 import "../../../assets/styles/rooms.css";
 import ChatThread from "./thread";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useGiraf } from "../../../giraf";
 import CreateRoomView from "./createView";
 import { baseUrl, useGetApi } from "../../../../bff/hooks";
@@ -63,6 +63,17 @@ const Rooms = () => {
         new Date(b.Room.created_at).getTime() -
         new Date(a.Room.created_at).getTime()
     );
+  const [isDesktop, setIsDesktop] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 1024px)');
+    const apply = () => setIsDesktop(mq.matches);
+    apply();
+    mq.addEventListener ? mq.addEventListener('change', apply) : mq.addListener(apply);
+    return () => {
+      mq.removeEventListener ? mq.removeEventListener('change', apply) : mq.removeListener(apply);
+    };
+  }, []);
+
   return (
     <div className="comm_events rooms_page">
       {loading && <Loading />}
@@ -85,7 +96,7 @@ const Rooms = () => {
 
       {gHead.user ? (
         <div className="rooms_holder">
-          {(!gHead.room_view || gHead.room_view === "room_main") && (
+          {(!isDesktop && (!gHead.room_view || gHead.room_view === "room_main")) && (
             <>
               <p className="comm_titles" style={{ paddingLeft: 0, display: "flex", alignItems: "center" }}>
                 <span style={{}}>Study Rooms</span>
@@ -251,7 +262,76 @@ const Rooms = () => {
             </>
           )}
 
-          {gHead.room_view === "room_chat" && <ChatThread room={focusedRoom} />}
+          {!isDesktop && gHead.room_view === "room_chat" && <ChatThread room={focusedRoom} />}
+          {isDesktop && (
+            <div className="rooms_split">
+              <div className="rooms_list">
+                <p className="comm_titles" style={{ paddingLeft: 0, display: "flex", alignItems: "center" }}>
+                  <span>Study Rooms</span>
+                  <RefreshOutlined style={{ fontSize: "30px", marginLeft: "10px", height: "20px" }} onClick={() => addGHead("refresh_rooms", true)} />
+                </p>
+                <p style={{ fontWeight: "300", margin: 0, textAlign: "left" }}>My Rooms</p>
+                {userRooms.length > 0 ? (
+                  userRooms
+                    .sort((a, b) => new Date(b.Room.created_at).getTime() - new Date(a.Room.created_at).getTime())
+                    .map((r) => {
+                      const [bgColor, textColor] = getRandomColor(colors.length);
+                      const room = r.Room;
+                      return (
+                        <div className="cr_card" key={room.id} onClick={() => {
+                          setFocusedRoom(room);
+                          const roomData = JSON.parse(localStorage.getItem(room.id)) || [];
+                          addGHead("focused_room", roomData);
+                          addGHead("focused_room_id", room.id);
+                          addGHead("notifications", 0);
+                        }}>
+                          <div className="cr_avator" style={{ backgroundColor: bgColor, color: textColor }} />
+                          <div className="cr_content">
+                            <p className="cr_title">{room.title}</p>
+                            <p className="cr_und">{getDate(new Date(room.created_at))} | created by: {room.Owner.name}</p>
+                          </div>
+                          <div style={{ flex: 1 }}>
+                            <p className="cr_join" style={{ border: "1px solid rgb(46, 77, 117)", float: "right", height: "20px", width: "40px", borderRadius: "50px", color: "rgb(46, 77, 117)", fontWeight: "500", lineHeight: "0", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "12px" }}>
+                              {(JSON.parse(localStorage.getItem(room.id)) || []).filter((chat) => chat.status != "READ").length}
+                            </p>
+                          </div>
+                        </div>
+                      );
+                    })
+                ) : (
+                  <p className="cr_no_rooms" style={{ fontWeight: "300" }}>No Rooms Joined Yet</p>
+                )}
+                <p style={{ fontWeight: "300", marginTop: "4%", textAlign: "left" }}>Other Rooms</p>
+                {otherRooms.length > 0 ? (
+                  otherRooms.map((r) => {
+                    const room = r.Room;
+                    const [bgColor, textColor] = getRandomColor(colors.length);
+                    return (
+                      <div className="cr_card" key={room.id} onClick={() => { setFocusedRoom(room); addGHead("join_room_view", true); }}>
+                        <div className="cr_avator" style={{ backgroundColor: bgColor, color: textColor }} />
+                        <div className="cr_content">
+                          <p className="cr_title">{room.title}</p>
+                          <p className="cr_und">{getDate(new Date(room.created_at))} | created by: {room.Owner?.name}</p>
+                        </div>
+                        <div style={{ border: "1px solid rgb(46, 77, 117)", paddingLeft: "10px", paddingRight: "10px", borderRadius: "5px", marginLeft: "15%" }}>
+                          <p className="cr_join" style={{ color: "rgb(46, 77, 117)", fontWeight: "500", lineHeight: "0" }}>Join</p>
+                        </div>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <p className="cr_no_rooms" style={{ fontWeight: "300" }}>No More Rooms To Join</p>
+                )}
+              </div>
+              <div className="rooms_thread">
+                {focusedRoom ? (
+                  <ChatThread room={focusedRoom} />
+                ) : (
+                  <div style={{ padding: 16, color: '#444' }}>Select a room to view messages</div>
+                )}
+              </div>
+            </div>
+          )}
           {gHead.room_view === "room_create" && <CreateRoomView />}
           {gHead.join_room_view && <JoinRoom room={focusedRoom} />}
         </div>

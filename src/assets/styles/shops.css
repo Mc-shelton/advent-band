@@ -11,14 +11,22 @@
 .s_landing {
   width: 100%;
   height: 96%;
-  overflow: scroll;
-  display: flex;
-  justify-content: space-around;
-  flex-wrap: wrap;
-  align-items: flex-start;
+  overflow: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 16px;
+  align-items: start;
+  padding: 8px 12px;
 }
 .shops_card {
-  width: 40%;
+  width: 100%;
+}
+.shops_card{
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.shops_card:hover{
+  transform: translateY(-2px);
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
 .sc_ava {
   background-position: center;
@@ -45,14 +53,15 @@
   color: rgb(190, 123, 0);
 }
 .floating_menu {
-  position: absolute;
-  right: 10%;
-  top: 10%;
+  position: fixed;
+  right: 16px;
+  top: 16px;
   background-color: white;
   width: 120px;
   padding-left: 15px;
   padding-right: 15px;
   border-radius: 10px;
+  z-index: 1001;
 }
 .flm_butts {
   float: right;
@@ -159,7 +168,7 @@
 .cart_view {
   width: 100%;
   height: 100%;
-  overflow: scroll;
+  overflow: auto;
 }
 .cv_hd {
   font-weight: 600;
@@ -167,14 +176,16 @@
 }
 .cart_view .cart_item {
   display: flex;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
   width: 100%;
-  height: 100px;
-  margin-top: 15px;
-  border: 1px solid gray;
-  padding: 15px;
-  border-radius: 15px;
+  min-height: 90px;
+  margin-top: 12px;
+  border: 1px solid #cfcfcf;
+  padding: 12px;
+  border-radius: 12px;
+  background: #fff;
+  gap: 12px;
 }
 .ci_left,
 .ci_right {
@@ -188,7 +199,7 @@
   flex: 1;
   /* border-right: 1px solid gray; */
   height: 100%;
-  overflow: scroll;
+  overflow: hidden;
   padding-right: 10px;
 }
 .ci_right {
@@ -236,15 +247,82 @@
   font-weight: 600;
   border-radius: 10px;
 }
-.order_confirm {
-  position: absolute;
-  width: 80%;
-  left: 10%;
-  right: 10%;
-  background-color: white;
-  /* border: 1px solid red; */
-  border-radius: 15px;
-  padding: 15px;
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+.check_out_bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: env(safe-area-inset-bottom, 0);
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0));
+  background: linear-gradient(180deg, rgba(255,255,255,0) 0%, #ffffff 40%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+.cv_total { margin-bottom: 80px; }
 
+/* Desktop cart layout */
+.cv_grid{ display: grid; gap: 16px; }
+.cv_list{ display: grid; gap: 12px; }
+.cv_summary{
+  display: none;
+  position: sticky;
+  top: 88px;
+  align-self: start;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 16px;
+  height: fit-content;
+}
+.cv_row{ display:flex; justify-content: space-between; margin: 8px 0; font-size: 14px; }
+.cv_row.total{ font-weight: 700; font-size: 16px; margin-top: 12px; }
+.cv_summary_cta{ margin-top: 12px; display: flex; }
+.order_confirm {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.25);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+}
+.order_confirm_card{
+  background-color: white;
+  border-radius: 14px;
+  padding: 16px;
+  max-width: 520px;
+  width: 100%;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .cart_view .cart_item { flex-direction: column; align-items: flex-start; }
+  .ci_right { width: 100%; padding-left: 0; }
+  .ci_right label { display: flex; align-items: center; gap: 8px; }
+  .cv_hd { font-size: 18px; }
+  .item_view_image { height: 200px; }
+}
+
+@media (min-width: 900px) {
+  .s_landing { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+  .item_view_image { height: 320px; }
+  .sc_ava { height: 190px; }
+}
+@media (min-width: 1200px) { .sc_ava { height: 220px; } }
+
+/* Desktop item layout */
+@media (min-width: 1024px){
+  .item_view{ display: grid; grid-template-columns: 2fr 1fr; gap: 24px; align-items: start; }
+  .item_view_image{ border-radius: 12px; }
+  .item_sidebar{ position: sticky; top: 88px; align-self: start; background: #fff; border: 1px solid #e0e0e0; border-radius: 12px; padding: 16px; }
+  .item_sidebar .price{ font-size: 20px; font-weight: 700; margin: 8px 0; }
+  .item_sidebar .cta{ margin-top: 12px; }
+}
+
+@media (min-width: 1024px){
+  .cv_grid{ grid-template-columns: 2fr 1fr; }
+  .cv_summary{ display: block; }
+  .check_out_bar, .cv_total{ display: none; }
 }

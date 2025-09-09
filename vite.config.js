@@ -7,8 +7,10 @@ export default defineConfig({
   plugins: [react()],
   assetsInclude: ['**/*.epub'],
   resolve: {
+    dedupe: ['react', 'react-dom'],
     alias: {
-      "@": path.resolve(__dirname, "src"), // Allows "@/..." as an alias for "src/"
+      '@': path.resolve(__dirname, 'src'), // Allows "@/..." as an alias for "src/"
     },
   },
+  optimizeDeps: {}
 })

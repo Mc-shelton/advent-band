@@ -30,16 +30,16 @@
     margin: 0;
 }
 .blister{
-    margin-top: 20%;
+    /* margin-top: 20%; */
     max-height: 78%;
     overflow: scroll;
-    padding-top: 10%;
+    /* padding-top: 10%; */
 }
 .blister .bible_list{
     text-align: left;
     border-bottom: 1px solid rgb(230, 230, 230);
     padding-bottom: 10px;
-    padding-top: 10px;
+    /* padding-top: 10px; */
 
 }
  .bibles{

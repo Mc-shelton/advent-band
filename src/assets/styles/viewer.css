@@ -1,30 +1,28 @@
 .pdf-viewer {
   top: 0;
   width: 100%;
-  overflow: scroll;
-  padding: 5px;
+  overflow: auto;
+  padding: 8px;
 }
 .pdf-page {
-  border: 2px solid red;
+  /* border: 2px solid red; */
   /* height: 100%; */
   /* max-width: 100%; */
 }
 
 .viewer_controls {
-  /* border: 2px solid red; */
   position: fixed;
   display: flex;
   box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
   z-index: 11;
   background-color: white;
-  border-radius: 15px;
-  justify-content: flex-start;
+  border-radius: 12px;
+  justify-content: center;
   align-items: center;
-  flex-direction: column;
-  padding-left: 35px;
-  padding-right: 35px;
-  bottom: 20%;
+  gap: 8px;
+  padding: 10px 16px;
   left: 50%;
+  bottom: calc(16px + env(safe-area-inset-bottom, 0));
   transform: translateX(-50%);
 }
 .slider_input {
@@ -40,12 +38,13 @@
 }
 .zoomer_btn {
   background-color: rgb(219, 219, 219);
-  padding: 5px;
-  padding-left: 20px;
-  font-size: 10px;
-  padding-right: 20px;
-  border-radius: 15px;
-  margin-left: 15px;
+  padding: 6px 12px;
+  font-size: 12px;
+  border-radius: 12px;
+}
+
+@media (min-width: 900px){
+  .pdf-viewer{ padding: 16px; }
 }
 
 input[type="range"] {

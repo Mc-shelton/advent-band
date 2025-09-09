@@ -3,7 +3,9 @@ import "../../assets/styles/global.css";
 import { HomeFilled } from "@ant-design/icons";
 import menuItems from "./menuitems";
 import { useGiraf } from "../../giraf";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { prefetchPath, prefetchCommon } from "@/routes/prefetch";
+import { useEffect } from "react";
 import PlayArrow from "@mui/icons-material/PlayArrow";
 import { ArrowLeft, ArrowRight } from "@mui/icons-material";
 import MusicNoteOutlinedIcon from '@mui/icons-material/MusicNoteOutlined';
@@ -14,6 +16,22 @@ const BottomNav = () => {
   const [selected, setSelected] = useState(0);
   const { gHead,addGHead } = useGiraf();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Derive selected tab from current route so highlight stays in sync
+  useEffect(() => {
+    const path = location.pathname;
+    const idx = menuItems.findIndex(m => m.path === path);
+    if (idx >= 0) setSelected(idx);
+    // Auto toggle mini-tab for Bible/Hymns based on route
+    if (idx === 1 || idx === 2) {
+      addGHead('m_tab', true);
+      if (idx === 2) addGHead('s_t', 'Hymns');
+      if (idx === 1) addGHead('s_t', 'Bible');
+    } else {
+      addGHead('m_tab', false);
+    }
+  }, [location.pathname]);
 
   const handleClick = (index) => {
     setActiveIndex(index);
@@ -35,22 +53,29 @@ const BottomNav = () => {
     }
     if(index == 2){
       addGHead('s_t', "Hymns")
-      addGHead("s_n", `001`)
-
+      // only set default hymn if none chosen yet
+      if (!gHead.s_n) addGHead("s_n", `001`)
     }
     if(index ==1){
-
       addGHead('s_t', "Bible")
-      addGHead("s_n", `Genesis 1`)
+      // set a readable default for the Bible mini tab
+      if (!gHead.bible_ref) addGHead("bible_ref", `Genesis 1`)
       addGHead("bsearch", true)
       addGHead("showBooks", true)
-
     }
-    navigate(menuItems[index].path);
+    const path = menuItems[index].path;
+    // Ensure the chunk is requested, then navigate
+    prefetchPath(path);
+    navigate(path);
   };
 
+  // Kick off common prefetch once after first paint
+  useEffect(() => {
+    if (typeof window !== 'undefined') prefetchCommon();
+  }, []);
+
   return (
-    <div className="bottom_nav">
+    <div className="bottom_nav" >
         {gHead.m_tab && <div className="m_tab">
             <div className="note"><MusicNoteOutlinedIcon/></div>
             <div className="base" onClick={()=>{
@@ -63,14 +88,26 @@ const BottomNav = () => {
                 }
             }}>
                 <ChevronLeftOutlined/>
-                <p className="base_p">{gHead.s_t =='Bible'? gHead.s_n :'Hymn '+ (gHead.s_n?.padStart(3,'0') || '001')}</p>
+                <p className="base_p">
+                  {selected === 1
+                    ? (gHead.bible_ref || 'Genesis 1')
+                    : selected === 2
+                      ? ('Hymn ' + (gHead.s_n?.padStart(3,'0') || '001'))
+                      : ''}
+                </p>
                 <ChevronRightOutlinedIcon/>
             </div>
         </div>}
         <div className="nav">
       {menuItems.map((nav, index) => {
         return (
-          <div key={index} className="n_nav" onClick={() => handleClick(index)}>
+          <div
+            key={index}
+            className="n_nav"
+            onMouseEnter={() => prefetchPath(menuItems[index].path)}
+            onTouchStart={() => prefetchPath(menuItems[index].path)}
+            onClick={() => handleClick(index)}
+          >
             <div className={`n_icon ${activeIndex === index ? "active" : ""}`}>
               {selected === index ? nav.icon : nav.icon_o}
             </div>

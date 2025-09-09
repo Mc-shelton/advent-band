@@ -13,7 +13,7 @@ function useGetApi() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const { gHead, addGHead } = useGiraf();
-    const headerConfig = {"x-api-key": apiKeys, Authorization:'Bearer '+Cookies.get('auth_token')}
+    const headerConfig = {"x-api-key": apiKeys, Authorization:'Bearer '+(Cookies.get('auth_token') || Cookies.get('AuthToken')?.replace('Bearer ','') )}
 
 
     const actionRequest = async ({ endPoint, params, hd }) => {

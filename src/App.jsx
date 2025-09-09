@@ -9,6 +9,7 @@ import { useGiraf } from "./giraf";
 import Cookie from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 import { baseUrl, useGetApi, usePostApi } from "../bff/hooks";
+import { safeRandomId } from "./lib/uuid";
 import { useGroupSocket } from "../bff/hooks/socket";
 import Cookies from "js-cookie";
 
@@ -21,9 +22,13 @@ function App() {
   useEffect(() => {
     const token = Cookie.get("auth_token");
     if (!token) return;
-    const user = jwtDecode(token);
-    addGHead("auth_token", "Bearer " + token);
-    addGHead("user", user);
+    try{
+      const user = jwtDecode(token);
+      addGHead("auth_token", "Bearer " + token);
+      addGHead("user", user);
+    }catch(e){
+      // ignore invalid token
+    }
     // connnect to socket
     actionRequest({ endPoint: `${baseUrl}rooms` })
       .then((res) => {
@@ -105,9 +110,12 @@ function App() {
 
   useEffect(() => {
     let c = Cookies.get("auth_token");
-    let user = c ? jwtDecode(c) : {};
+    let user = {};
+    try{
+      user = c ? jwtDecode(c) : {};
+    }catch(e){ user = {}; }
     if (!user.id)
-      user.id = localStorage.getItem("temp_user_id") || crypto.randomUUID();
+      user.id = localStorage.getItem("temp_user_id") || safeRandomId();
     localStorage.setItem("temp_user_id", user.id);
     const userActivity = {
       user_id: user.id,
@@ -122,7 +130,6 @@ function App() {
     })
       .then((res) => {
         console.log("User activity logged successfully");
-        something_that_will_not_work;
       })
       .catch((err) => {
         // throw vercel error

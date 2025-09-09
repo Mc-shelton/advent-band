@@ -7,7 +7,7 @@ import CButton from "../../../components/buttton";
 
 const CartView = () => {
   const { gHead, addGHead } = useGiraf();
-  const [cartItems, setCartItems] = useState(gHead.cart);
+  const [cartItems, setCartItems] = useState(gHead.cart || []);
   const { actionRequest } = usePostApi();
 
   const [loading, setLoading] = useState();
@@ -72,18 +72,23 @@ const CartView = () => {
       });
   };
   return (
-    <div className="cart_view" style={{ padding: "20px" }}>
-      {orderSuccess && <div className="order_confirm">
-        <p>
-          We have received your order!
-          You will receive an email of your invoice, delivery and payment details
-        </p>
-
-        <CButton text={'Close'} onClick={()=>{
-        addGHead("shop_view", "landing");
-        }}/>
-
-      </div>}
+    <div className="cart_view" style={{ padding: "16px", paddingBottom: 88 }}>
+      {orderSuccess && (
+        <div className="order_confirm">
+          <div className="order_confirm_card">
+            <p>
+              We have received your order!
+              You will receive an email of your invoice, delivery and payment details
+            </p>
+            <CButton
+              text={"Close"}
+              onClick={() => {
+                addGHead("shop_view", "landing");
+              }}
+            />
+          </div>
+        </div>
+      )}
       {loading && <Loading />}
       {message && (
         <MessageBox txt={message} type={messageType} key={"some key"} />
@@ -92,50 +97,70 @@ const CartView = () => {
       {cartItems.length === 0 ? (
         <p>Your cart is empty.</p>
       ) : (
-        <div>
-          {cartItems.map((item) => (
-            <div key={item.id} className="cart_item">
-              <div className="ci_left">
-                <p className="ci_ih">{item.name}</p>
-                <p className="ci_ip">Price: ${item.price}</p>
-              </div>
-              <div className="ci_right">
-                <label>
-                  Quantity:
-                  <input
-                    type="number"
-                    value={item.quantity}
-                    onChange={(e) =>
-                      handleQuantityChange(
-                        item.id,
-                        parseInt(e.target.value, 10)
-                      )
-                    }
-                    style={{ width: "50px", marginLeft: "10px" }}
-                    onFocus={() => {
-                      addGHead("keyboard", true);
-                    }}
-                    onBlur={() => {
-                      setTimeout(() => {
-                        addGHead("keyboard", undefined);
-                      }, 100);
-                      console.log("onblure");
-                    }}
-                  />
-                </label>
-                <div
-                  onClick={() => handleRemoveItem(item.id)}
-                  className="cv_rmv_butt"
-                >
-                  Remove
+        <div className="cv_grid">
+          <div className="cv_list">
+            {cartItems.map((item) => (
+              <div key={item.id} className="cart_item">
+                <div className="ci_left">
+                  <p className="ci_ih">{item.name}</p>
+                  <p className="ci_ip">Price: ${item.price}</p>
+                </div>
+                <div className="ci_right">
+                  <label>
+                    Quantity:
+                    <input
+                      type="number"
+                      min={1}
+                      step={1}
+                      value={item.quantity}
+                      onChange={(e) =>
+                        handleQuantityChange(
+                          item.id,
+                          parseInt(e.target.value, 10)
+                        )
+                      }
+                      style={{ width: "60px", marginLeft: "10px" }}
+                      onFocus={() => {
+                        addGHead("keyboard", true);
+                      }}
+                      onBlur={() => {
+                        setTimeout(() => {
+                          addGHead("keyboard", undefined);
+                        }, 100);
+                      }}
+                    />
+                  </label>
+                  <div
+                    onClick={() => handleRemoveItem(item.id)}
+                    className="cv_rmv_butt"
+                  >
+                    Remove
+                  </div>
                 </div>
               </div>
+            ))}
+          </div>
+          <aside className="cv_summary">
+            <p className="cv_hd">Order Summary</p>
+            <div className="cv_row">
+              <span>Items</span>
+              <span>{cartItems.length}</span>
             </div>
-          ))}
-          <h2>Total: ${calculateTotal()}</h2>
-          <div style={{}}></div>
-          <div className="check_out" onClick={pushOrder}>
-            Check Out
+            <div className="cv_row total">
+              <span>Total</span>
+              <span>${calculateTotal()}</span>
+            </div>
+            <div className="cv_summary_cta">
+              <div className="check_out" onClick={pushOrder} aria-label="Proceed to checkout">
+                Check Out
+              </div>
+            </div>
+          </aside>
+          <h2 className="cv_total">Total: ${calculateTotal()}</h2>
+          <div className="check_out_bar">
+            <div className="check_out" onClick={pushOrder} aria-label="Proceed to checkout">
+              Check Out
+            </div>
           </div>
         </div>
       )}

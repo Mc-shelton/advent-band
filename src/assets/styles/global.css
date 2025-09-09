@@ -187,10 +187,13 @@
     width: 100%;
     display: flex;
     align-items: center;
-    overflow: scroll;
-    position: fixed;
+    overflow: auto;
+    position: sticky;
+    top: 0;
     background-color: rgb(244, 244, 244);
     z-index: 100000;
+    gap: 8px;
+    padding: 10px 8px;
   }
   .p_header p{
     font-weight: 500;
@@ -206,8 +209,8 @@
   }
   .h_icons{
     display: flex;
-    margin-left: 8%;
-
+    margin-left: auto;
+    gap: 10px;
   }
   .h_icons p{
     color: black;
@@ -232,20 +235,20 @@
     width: 100%;
     height: 100%;
   }
-.searchBox{
+  .searchBox{
     display: flex;
     justify-content: center;
     align-items: center;
     background-color: white;
-    position: fixed;
+    position: sticky;
+    top: 0;
     width: 100%;
     margin-left: 0;
-    padding-top: 5%;
-    margin-top: -1%;
-}
+    padding: 12px 0;
+  }
   .search{
     display: flex;
-    width: 75%;
+    width: min(680px, 90%);
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
     align-items: center;
     justify-content: center;
@@ -299,4 +302,16 @@ input{
 textarea{
   background-color: transparent;
   color: black;
+}
+:root{
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --radius-1: 8px;
+  --radius-2: 12px;
+  --radius-3: 16px;
+  --container-max: 1200px;
 }

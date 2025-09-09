@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useGiraf } from "../../src/giraf";
 import Cookies from "js-cookie";
 import { add } from "lodash";
+import { WS_URL } from "../../src/config";
 
 var doneDeals = [];
 export const useGroupSocket = ({ onMessage }) => {
@@ -10,8 +11,7 @@ export const useGroupSocket = ({ onMessage }) => {
   const { gHead, addGHead } = useGiraf();
 
   useEffect(() => {
-    // const socket = new WebSocket("ws://localhost:3122");
-    const socket = new WebSocket("wss://api.adventband.org");
+    const socket = new WebSocket(WS_URL);
     socketRef.current = socket;
     socket.onopen = () => {
       console.log("WebSocket connected");

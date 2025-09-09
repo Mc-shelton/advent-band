@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import { BrowserRouter } from 'react-router-dom'
 import { GirafProvider } from './giraf/index'
+import ErrorBoundary from './components/ErrorBoundary'
 
 // Lazy load App component
 const App = lazy(() => import('./App.jsx'))
@@ -20,7 +21,9 @@ createRoot(document.getElementById('root')).render(
           color:'black',
           fontSize:'12px'
         }}>Loading app...</div>}>
-          <App />
+          <ErrorBoundary>
+            <App />
+          </ErrorBoundary>
         </Suspense>
       </GirafProvider>
     </BrowserRouter>

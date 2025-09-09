@@ -68,6 +68,8 @@ function Uploader() {
         <img
           src={previewSrc}
           alt="Preview"
+          loading="lazy"
+          decoding="async"
           style={{ marginTop: "20px", maxWidth: "100%" }}
         />
       )}

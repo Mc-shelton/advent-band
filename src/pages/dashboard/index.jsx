@@ -6,10 +6,9 @@ import ElectricMeterOutlinedIcon from "@mui/icons-material/ElectricMeterOutlined
 import AttractionsOutlinedIcon from "@mui/icons-material/AttractionsOutlined";
 import BoltIcon from "@mui/icons-material/Bolt";
 import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
-import data from "../../assets/db/n_eng_db.json";
 import { useGiraf } from "../../giraf";
 import dailyBreadImage from "../../assets/images/dailybread.jpg";
-import testImage from '../../assets/images/test.jpeg'
+import testImage from "../../assets/images/test.jpeg";
 import {
   CloseOutlined,
   PauseCircleOutline,
@@ -25,13 +24,12 @@ import { ClockCircleOutlined, EyeOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import PdfViewer from "../viewers/pdfViewer";
 import { baseUrl, useGetApi } from "../../../bff/hooks";
-import { useGroupSocket } from "../../../bff/hooks/socket";
 import AudioPlayer from "../../components/player";
-import sermonData from '../../assets/db/sermons.json';
+// Defer loading sermons data to avoid blocking route load on mobile
 
 const DashboardDefault = () => {
   const [m, setM] = useState("T");
-  const {gHead, addGHead } = useGiraf();
+  const { gHead, addGHead } = useGiraf();
   const [showDivotionalButts, setShowDivotionalButts] = useState(false);
   const [periodicals, setPeriodicals] = useState([]);
   const [prophecy, setProphecy] = useState();
@@ -39,15 +37,10 @@ const DashboardDefault = () => {
   const [playingId, setPlayingId] = useState("");
   const { actionRequest } = useGetApi();
   const devotionalRef = useRef();
-  const [sermons, setSermons] = useState(sermonData || []);
-  const player = useRef({});
-  const [playingPeriodical, setPlayingPeriodical] = useState();
-  const [pauseTime, setPauseTime] = useState(0)
-  const [lastPlayed, setLastPlayed] = useState(null);
+  const [sermons, setSermons] = useState([]);
   const playersRef = useRef({});
 
   const navigate = useNavigate();
-
 
   const handleMChange = (t) => {
     setM(t);
@@ -64,16 +57,31 @@ const DashboardDefault = () => {
   }, []);
 
   useEffect(() => {
-    console.log(playingId)
+    console.log(playingId);
     if (playingId && playersRef.current[playingId]) {
-      playersRef.current[playingId].play().then(player=>{
-      playersRef.current[playingId].currentTime = getPlayHistory(playingId);
-      }).catch((err) => {
-        console.error("Autoplay failed:", err);
-      })
-
+      playersRef.current[playingId]
+        .play()
+        .then(() => {
+          playersRef.current[playingId].currentTime = getPlayHistory(playingId);
+        })
+        .catch((err) => {
+          console.error("Autoplay failed:", err);
+        });
     }
   }, [playingId]);
+
+  // Lazy load sermons JSON after paint to avoid blocking initial render
+  useEffect(() => {
+    let active = true;
+    const rif = (cb) => (window.requestIdleCallback ? window.requestIdleCallback(cb, { timeout: 1000 }) : setTimeout(cb, 0));
+    rif(async () => {
+      try {
+        const mod = await import('../../assets/db/sermons.json');
+        if (active) setSermons(mod.default || []);
+      } catch (_) {}
+    });
+    return () => { active = false; };
+  }, []);
 
   const handlePlay = (id) => {
     // Pause previous audio if another one is playing
@@ -86,39 +94,42 @@ const DashboardDefault = () => {
   };
 
   const handlePause = (id) => {
-    console.log("handling puase ::: ")
+    console.log("handling puase ::: ");
     if (playersRef.current[id]) {
       playersRef.current[id].pause();
       savePlayHistory(id, playersRef.current[id].currentTime);
       // setPauseTime(pausedTime);
-    
     }
     setPlayingId(null);
   };
-  const savePlayHistory = (id, time)=>{
-    if(["mission", "vop"].includes(id)){
-      let today = new Date()
+  const savePlayHistory = (id, time) => {
+    if (["mission", "vop"].includes(id)) {
+      let today = new Date();
       // TODO : add an identity
-      id = `${id}_${today.getFullYear()}_${today.getMonth() + 1}_${today.getDate()}`;
+      id = `${id}_${today.getFullYear()}_${
+        today.getMonth() + 1
+      }_${today.getDate()}`;
     }
-    let hist = localStorage.getItem('playHistory');
+    let hist = localStorage.getItem("playHistory");
     hist = hist ? JSON.parse(hist) : {};
     hist[id] = time;
-    localStorage.setItem('playHistory', JSON.stringify(hist));
-  }
+    localStorage.setItem("playHistory", JSON.stringify(hist));
+  };
 
-const getPlayHistory = (id)=>{
-  if(["mission", "vop"].includes(id)){
-      let today = new Date()
+  const getPlayHistory = (id) => {
+    if (["mission", "vop"].includes(id)) {
+      let today = new Date();
       // TODO : add an identity
-      id = `${id}_${today.getFullYear()}_${today.getMonth() + 1}_${today.getDate()}`;
+      id = `${id}_${today.getFullYear()}_${
+        today.getMonth() + 1
+      }_${today.getDate()}`;
     }
-  let hist = localStorage.getItem('playHistory');
-  hist = hist ? JSON.parse(hist) : {};
-  let time = hist[id] || 0;
-  time = time > 3 ? time - 3 : 0;
-  return time 
-}
+    let hist = localStorage.getItem("playHistory");
+    hist = hist ? JSON.parse(hist) : {};
+    let time = hist[id] || 0;
+    time = time > 3 ? time - 3 : 0;
+    return time;
+  };
 
   return (
     <div className="Home nav_page">
@@ -147,8 +158,9 @@ const getPlayHistory = (id)=>{
           </div>
           <div className="h_ic">
             <NotificationsNoneOutlinedIcon className="h_ic_" />
-            {gHead.notifications > 0 && <p>
-              {/* {(() => {
+            {gHead.notifications > 0 && (
+              <p>
+                {/* {(() => {
                 let keys = Object.keys(localStorage);
                 let unreadMessages = keys.map((k) => {
                   console.log(k);
@@ -168,19 +180,26 @@ const getPlayHistory = (id)=>{
                 // find total of unread messages
                 return unreadMessages.reduce((a, b) => a + b, 0);
               })()} */}
-              {gHead.notifications || 0}
-            </p>}
+                {gHead.notifications || 0}
+              </p>
+            )}
           </div>
         </div>
         <div>
           <CButton
-            text={gHead.user ? gHead.user.name ? gHead.user.name[0]:  gHead.user.email[0] :  "Sign In"}
+            text={
+              gHead.user
+                ? gHead.user.name
+                  ? gHead.user.name[0]
+                  : gHead.user.email[0]
+                : "Sign In"
+            }
             onClick={() => {
               addGHead("login", true);
             }}
             style={{
               marginLeft: "15%",
-              fontWeight: gHead.user? '700' : '400',
+              fontWeight: gHead.user ? "700" : "400",
               fontSize: "12px",
               paddingLeft: "18px",
               paddingRight: "18px",
@@ -236,12 +255,17 @@ const getPlayHistory = (id)=>{
             >
               <div className="hs_container">
                 <p className="hs_p1">Did You Know?</p>
-                <p className="hs_p2" style={{
-                  // lineHeight:'25px',
-                  overflow:'hidden',
-                  textOverflow:'ellipsis',
-                  textWrap:'nowrap'
-                }}>{prophecy?.title}</p>
+                <p
+                  className="hs_p2"
+                  style={{
+                    // lineHeight:'25px',
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    textWrap: "nowrap",
+                  }}
+                >
+                  {prophecy?.title}
+                </p>
                 <p
                   className="hs_p3"
                   style={{
@@ -254,6 +278,8 @@ const getPlayHistory = (id)=>{
                     devotionalRef.current.style.left = "0";
                     devotionalRef.current.style.borderRadius = "0px";
                     devotionalRef.current.style.height = "100%";
+                    devotionalRef.current.style.width = "100%";
+                    devotionalRef.current.style.marginTop = "0";
                     devotionalRef.current.style.zIndex = "100005";
                     setShowDivotionalButts(true);
                   }}
@@ -313,7 +339,9 @@ const getPlayHistory = (id)=>{
                 <div
                   className="hs_2_right"
                   style={{
-                    backgroundImage: `url(${periodicals?.thumb_nails || dailyBreadImage})`,
+                    backgroundImage: `url(${
+                      periodicals?.thumb_nails || dailyBreadImage
+                    })`,
                     overflow: "hidden",
                   }}
                   onClick={() => {
@@ -335,13 +363,19 @@ const getPlayHistory = (id)=>{
                 <AudioPlayer
                   sermonId={"mission"}
                   refCallback={(el) => (playersRef.current["mission"] = el)}
-                  src={periodicals?.url ||  "https://adventband.org/bucket/sermons/a_major.mp3"}
+                  src={
+                    periodicals?.url ||
+                    "https://adventband.org/bucket/sermons/a_major.mp3"
+                  }
                 />
               )}
             </div>
-            <div className="hs_2"  style={{
+            <div
+              className="hs_2"
+              style={{
                 height: playingId == "vop" && "fit-content",
-              }}>
+              }}
+            >
               <div className="hs_2_holder">
                 <div className="hs_2_left">
                   <p className="hs_2_p1">Voice Of Prophecy</p>
@@ -357,12 +391,12 @@ const getPlayHistory = (id)=>{
                 <div
                   className="hs_2_right"
                   style={{
-                    backgroundImage: `url(${vop?.thumb_nails ||dailyBreadImage})`,
+                    backgroundImage: `url(${
+                      vop?.thumb_nails || dailyBreadImage
+                    })`,
                   }}
                   onClick={() => {
-                    playingId == "vop"
-                      ? handlePause("vop")
-                      : handlePlay("vop");
+                    playingId == "vop" ? handlePause("vop") : handlePlay("vop");
                   }}
                 >
                   <div className="d_av_overlay">
@@ -378,7 +412,10 @@ const getPlayHistory = (id)=>{
                 <AudioPlayer
                   sermonId={"vop"}
                   refCallback={(el) => (playersRef.current["vop"] = el)}
-                  src={vop?.url || "https://adventband.org/bucket/sermons/a_major.mp3"}
+                  src={
+                    vop?.url ||
+                    "https://adventband.org/bucket/sermons/a_major.mp3"
+                  }
                 />
               )}
             </div>

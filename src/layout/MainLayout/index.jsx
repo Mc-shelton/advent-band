@@ -9,7 +9,7 @@ import AuthLogin from "../../pages/authentication/login";
 const MainLayout = () => {
   const {gHead, addGHead} = useGiraf()
   return (
-    <div className="main">
+    <div className="main" >
       {gHead.sidebar && <RightSideBar />}
       {gHead.login && <AuthLogin />}
       <Outlet />

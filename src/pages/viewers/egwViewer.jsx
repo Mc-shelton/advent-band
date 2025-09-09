@@ -67,25 +67,28 @@ const EgwViewer = () => {
         <ArrowBackOutlined />
       </div>
       <div className="reader">
-      {loading ? (
-        <div>Loading...</div>
-      ) : (
-        content.map((t, x) => {
-          return (
-            t.html?.length > 270 && <div
-
-            // onMouseDown={handleMouseDown}
-              onClick={(event) => {
-                event.target.style.color != "orange"
-                  ? (event.target.style.color = "orange")
-                  : (event.target.style.color = "black");
-              }}
-              key={x}
-              dangerouslySetInnerHTML={{ __html: t.html }}
-            />
-          );
-        })
-      )}
+        <div className="reader_inner">
+          {loading ? (
+            <div>Loading...</div>
+          ) : (
+            content.map((t, x) => {
+              return (
+                t.html?.length > 270 && (
+                  <div
+                    // onMouseDown={handleMouseDown}
+                    onClick={(event) => {
+                      event.target.style.color != "orange"
+                        ? (event.target.style.color = "orange")
+                        : (event.target.style.color = "black");
+                    }}
+                    key={x}
+                    dangerouslySetInnerHTML={{ __html: t.html }}
+                  />
+                )
+              );
+            })
+          )}
+        </div>
       </div>
     </div>
   );

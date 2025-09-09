@@ -1,5 +1,6 @@
 import RepeatIcon from "@mui/icons-material/Repeat";
 import testImage from "../../../assets/images/dailybread.jpg";
+import LazyImg from "@/components/LazyImg";
 import "../../../assets/styles/events.css";
 import { useGiraf } from "../../../giraf";
 import { useEffect, useState } from "react";
@@ -59,7 +60,7 @@ const EventPage = () => {
                 
                 {event.Gallary.length > 0 ? event.Gallary.map(image=>{
                   return(
-                    <img  className="ce_gal_img" src={testImage} onClick={(e)=>{
+                    <LazyImg  className="ce_gal_img" src={testImage} onClick={(e)=>{
                       let position = e.target.style.position
                       e.target.style.position = position != 'absolute' ? 'absolute' : 'relative'
                       e.target.style.top = '10%'

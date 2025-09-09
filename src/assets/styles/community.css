@@ -5,8 +5,9 @@
 .comm_nav{
     display: flex;
     flex-wrap: nowrap;
-    overflow: scroll;
-
+    overflow: auto;
+    gap: 8px;
+    padding: 8px 10px;
 }
 .comm_nav p{
     background-color: #e0e0e0;
@@ -36,21 +37,20 @@
 
 }
 .comm_events{
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
     justify-content: center;
-    align-items: flex-start;
-    padding: 20px;
+    align-items: start;
+    padding: 16px;
 }
 .ce_card{
-    /* border: 1px solid gray; */
     height: fit-content;
-    /* border-radius: 15px; */
     width: 100%;
     overflow: hidden;
-    border-bottom: 1px solid rgba(5, 20, 63, 0.587);
-    margin-top: 20px;
-    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(5, 20, 63, 0.12);
+    margin-top: 0;
+    padding-bottom: 12px;
 }
 .ce_card_img{
     border-radius: 15px;
@@ -85,6 +85,19 @@
     font-size: 16px;
     text-align: left;
     width: 100%;
-    padding-left: 10%;
-    margin-top: 20px;
+    padding-left: 8px;
+    margin-top: 8px;
+}
+
+@media (min-width: 768px){
+    .comm_events{ grid-template-columns: repeat(2, 1fr); padding: 20px; }
+    .ce_card .ce_p4{ font-size: 20px; }
+}
+
+@media (min-width: 1200px){
+    .comm_events{ grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (min-width: 1600px){
+    .comm_events{ grid-template-columns: repeat(4, 1fr); max-width: var(--container-max); margin: 0 auto; }
 }

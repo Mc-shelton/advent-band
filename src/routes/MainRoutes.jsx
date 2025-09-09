@@ -2,22 +2,24 @@ import { lazy } from 'react';
 
 // project import
 import Loadable from '@/components/Loadable';
-import DashboardDefault from '../pages/dashboard'
-import Auth from '../pages/authentication/auth';
-import AuthLogin from '../pages/authentication/login';
 import MainLayout from '../layout/MainLayout';
-import Hymns from '../pages/hymns';
-import Bible from '../pages/bible';
-import Discover from '../pages/discover';
-import Remedies from '../pages/discover/remedies';
-import Community from '../pages/community';
-import Estate from '../pages/estate';
-import PdfViewer from '../pages/viewers/pdfViewer';
-import LessonBooks from '../pages/estate/lessons';
-import Uploader from '../pages/loader';
-import EpubReader from '../pages/viewers/epubViewer';
-import FolderBooks from '../pages/estate/egw';
-import EgwViewer from '../pages/viewers/egwViewer';
+
+// Lazy loaded pages
+const DashboardDefault = Loadable(lazy(() => import('../pages/dashboard')));
+const Auth = Loadable(lazy(() => import('../pages/authentication/auth')));
+const AuthLogin = Loadable(lazy(() => import('../pages/authentication/login')));
+const Hymns = Loadable(lazy(() => import('../pages/hymns')));
+const Bible = Loadable(lazy(() => import('../pages/bible')));
+const Discover = Loadable(lazy(() => import('../pages/discover')));
+const Remedies = Loadable(lazy(() => import('../pages/discover/remedies')));
+const Community = Loadable(lazy(() => import('../pages/community')));
+const Estate = Loadable(lazy(() => import('../pages/estate')));
+const PdfViewer = Loadable(lazy(() => import('../pages/viewers/pdfViewer')));
+const LessonBooks = Loadable(lazy(() => import('../pages/estate/lessons')));
+const Uploader = Loadable(lazy(() => import('../pages/loader')));
+const EpubReader = Loadable(lazy(() => import('../pages/viewers/epubViewer')));
+const FolderBooks = Loadable(lazy(() => import('../pages/estate/egw')));
+const EgwViewer = Loadable(lazy(() => import('../pages/viewers/egwViewer')));
 // render - dashboard
 // const DashboardDefault = Loadable(lazy(() => import('@/pages/dashboard')));
 // const LoginScreen = Loadable(lazy(() => import('@/pages/authentication/login/index.jsx')));

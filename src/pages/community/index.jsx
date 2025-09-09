@@ -109,7 +109,7 @@ const Community = () => {
               onClick={() => {
                 if (gHead.prev_view_key) {
                   let prev = gHead.comm_page_prev;
-                  let t = prev.pop();
+                  // let t = prev.pop();
                   addGHead("comm_page_prev", prev);
                   addGHead(gHead.prev_view_key, gHead.prev_view_value);
                   // addGHead("room_view", 'room_main');

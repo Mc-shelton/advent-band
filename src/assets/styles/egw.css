@@ -1,12 +1,14 @@
 .egw_viewer{
-    /* border: 2px solid red; */
-    padding: 5%;
-    overflow: scroll;
-
+    padding: 16px;
+    overflow: auto;
 }
 .reader{
-    height: 94%;
-    overflow: scroll;
+    height: calc(100dvh - 120px);
+    overflow: auto;
+}
+.reader_inner{
+    max-width: 860px;
+    margin: 0 auto;
 }
 .refcode{
     display: none;
@@ -42,13 +44,18 @@
 .h1{
     font-weight: 600;
     text-align: center;
-    font-size: 35px;
-    
+    font-size: 28px;
 }
 .h3{
     font-weight: 500;
     text-align: center;
-    font-size: 25px;
+    font-size: 20px;
+}
+
+@media (min-width: 900px){
+    .egw_viewer{ padding: 24px; }
+    .h1{ font-size: 34px; }
+    .h3{ font-size: 24px; }
 }
 
 .bookendnote{

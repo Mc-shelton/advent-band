@@ -1,7 +1,6 @@
 import { useRoutes } from 'react-router-dom';
 
 // project import
-import LoginRoutes from './LoginRoutes';
 import MainRoutes from './MainRoutes';
 import { useGiraf } from '@/giraf/index';
 import { useEffect } from 'react';
@@ -13,7 +12,8 @@ import { jwtDecode } from 'jwt-decode';
 export default function ThemeRoutes() {
   const {gHead,addGHead} = useGiraf()
   useEffect(()=>{
-    let auth = Cookies.get('AuthToken')
+    // Prefer unified cookie name, but keep backward compatibility
+    let auth = Cookies.get('auth_token') || Cookies.get('AuthToken')
     let cart = localStorage.getItem("cart")
     if(cart){
       addGHead('cart', JSON.parse(cart))
@@ -22,11 +22,14 @@ export default function ThemeRoutes() {
     }
     if(auth){
       addGHead('AuthToken',auth)
-      let token = auth.split("Bearer ")[1]
-      const user = jwtDecode(token)
-      addGHead("AuthUser",user)
-      addGHead('Authenticated',true)
-
+      let token = auth.includes('Bearer ')? auth.split("Bearer ")[1] : auth
+      try{
+        const user = jwtDecode(token || '')
+        addGHead("AuthUser",user)
+        addGHead('Authenticated',true)
+      }catch(e){
+        // ignore bad token
+      }
     }
   },[])
   return useRoutes([MainRoutes]);

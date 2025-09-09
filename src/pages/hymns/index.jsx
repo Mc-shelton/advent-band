@@ -1,24 +1,31 @@
 import CButton from "../../components/buttton";
 import LanguageOutlinedIcon from "@mui/icons-material/LanguageOutlined";
 import "../../assets/styles/hymn.css";
-import en_eng from "../../assets/db/n_eng_db.json";
-import en_swa from "../../assets/db/n_swa_db.json";
-import en_luo from "../../assets/db/n_luo_db.json";
+import { getHymnBookCached } from "@/hymns/cache";
 import { SearchOutlined } from "@mui/icons-material";
-import { useState } from "react";
+import { LoadingOutlined } from "@ant-design/icons";
+import { useEffect, useState } from "react";
 import { useGiraf } from "../../giraf";
 import HymnLanguage from "./en_lister";
 const Hymns = () => {
   const [searchText, setSearchText] = useState(null);
   const [lan, setLan] = useState("ADH");
-  const [data, setData] = useState(en_eng);
-  const dlang = {
-    ADH: en_eng,
-    NZK: en_swa,
-    DHO: en_luo,
-  };
+  const [data, setData] = useState([]);
   const { gHead, addGHead } = useGiraf();
-  const [song, setSong] = useState(data[0]);
+  const [song, setSong] = useState(null);
+  const [loadingBook, setLoadingBook] = useState(false);
+  useEffect(() => {
+    // Load default hymnbook lazily
+    let active = true;
+    setLoadingBook(true);
+    getHymnBookCached(lan).then((d)=>{
+      if (!active) return;
+      setData(d);
+      setSong(d[0]);
+      setLoadingBook(false);
+    }).catch(()=> setLoadingBook(false));
+    return ()=>{ active=false };
+  }, []);
   const language = [
     { name: "English", code: "ADH" },
     { name: "Swahili", code: "NZK" },
@@ -116,20 +123,25 @@ const Hymns = () => {
           {!gHead.search && !gHead.lsearch && (
             <div className="h_disp">
               <div className="hd">
-                <p className="disp_n">{song?.number.padStart(3, "0")}</p>
-                <p className="disp_t">{song?.title}</p>
+                <p className="disp_n">{song?.number?.padStart(3, "0") || ''}</p>
+                <p className="disp_t">{song?.title || (loadingBook ? 'Loading…' : 'Select a hymn')}</p>
               </div>
               <div className="scroller">
-                {Object.keys(song)
+                {Object.keys(song || {})
                   .filter((l) => l.includes("verse"))
                   .map((v) => {
                     return (
                       <>
-                        <p className="disp_v">{song[v]}</p>
-                        <p className="disp_v">{song.refrain}</p>
+                        <p className="disp_v">{song?.[v]}</p>
+                        {song?.refrain && <p className="disp_v">{song.refrain}</p>}
                       </>
                     );
                   })}
+                {!song && (
+                  <div style={{ padding: '12px', color: '#666', fontSize: 12 }}>
+                    {loadingBook ? <LoadingOutlined /> : 'No hymn selected'}
+                  </div>
+                )}
                 <div></div>
               </div>
             </div>
@@ -154,18 +166,18 @@ const Hymns = () => {
                       className="row"
                       onClick={() => {
                         addGHead("lsearch", false);
-                        setData(dlang[d.code]);
-                        if (gHead.s_n) {
-                          setSong(
-                            dlang[d.code].filter(
-                              (t) => t.number === gHead.s_n
-                            )[0]
-                          );
-                          addGHead("search", true);
-                        } else {
-                          setSong(dlang[d.code][0]);
-                          addGHead("search", true);
-                        }
+                        setLoadingBook(true);
+                        setLan(d.code);
+                        getHymnBookCached(d.code).then((book)=>{
+                          setData(book);
+                          if (gHead.s_n) {
+                            const found = book.find((t)=> t.number === gHead.s_n);
+                            setSong(found || book[0]);
+                          } else {
+                            setSong(book[0]);
+                            addGHead("search", true);
+                          }
+                        }).finally(()=> setLoadingBook(false));
                       }}
                     >
                       <p

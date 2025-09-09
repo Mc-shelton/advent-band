@@ -14,7 +14,7 @@
 }
 .d_search input{
     background-color: rgb(244,244,244);
-    border: 2px solid red;
+    /* border: 2px solid red; */
 }
 .slid_butts{
     display: flex;
