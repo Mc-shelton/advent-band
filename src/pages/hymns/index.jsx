@@ -26,6 +26,24 @@ const Hymns = () => {
     }).catch(()=> setLoadingBook(false));
     return ()=>{ active=false };
   }, []);
+
+  // Respond to global hymn navigation (from bottom mini-tab)
+  useEffect(() => {
+    if (!gHead?.hymn_nav) return;
+    const nav = gHead.hymn_nav; // 'prev' | 'next'
+    const list = data || [];
+    if (list.length === 0) { addGHead('hymn_nav', undefined); return; }
+    // Find current index by hymn number; fall back to 0
+    const currentNum = song?.number || gHead?.s_n || list[0]?.number;
+    let idx = Math.max(0, list.findIndex((t)=> t.number === currentNum));
+    if (idx === -1) idx = 0;
+    idx = nav === 'next' ? (idx + 1) % list.length : (idx - 1 + list.length) % list.length;
+    const nextSong = list[idx];
+    setSong(nextSong);
+    addGHead('s_n', nextSong?.number);
+    addGHead('search', false);
+    addGHead('hymn_nav', undefined);
+  }, [gHead?.hymn_nav]);
   const language = [
     { name: "English", code: "ADH" },
     { name: "Swahili", code: "NZK" },

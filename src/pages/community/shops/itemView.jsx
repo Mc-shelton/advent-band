@@ -124,18 +124,8 @@ const ItemView = () => {
           ))}
         </div>
         <p className="item_tt">{item.name}</p>
-        <p className="item_dt">Description</p>
-        <p className="item_d">{item.description}</p>
-        <br />
-        <p className="item_dt">Mentions</p>
-        <div className="item_mentions">
-          <p>comming soon...</p>
-        </div>
-        <br />
-        <br />
-      </div>
-      <aside className="item_sidebar">
-        <div className="b_butts" style={{ gap: 8 }}>
+        <aside className="item_sidebar">
+        <div className="b_butts" style={{ gap: 8}}>
           <p>Qnt :</p>
           <input
             type="number"
@@ -152,9 +142,13 @@ const ItemView = () => {
               textAlign: "center",
             }}
           />
-        </div>
         <div className="price">Ksh {item.price}</div>
+        </div>
         <div
+        style={{
+          marginLeft:'10%',
+          marginRight:'10%'
+        }}
           className="t_butt cta"
           onClick={() => {
             let ex = gHead.cart;
@@ -168,6 +162,18 @@ const ItemView = () => {
           Add to cart
         </div>
       </aside>
+      <br/>
+        <p className="item_dt">Description</p>
+        <p className="item_d">{item.description}</p>
+        <br />
+        <p className="item_dt">Mentions</p>
+        <div className="item_mentions">
+          <p>comming soon...</p>
+        </div>
+        <br />
+        <br />
+      </div>
+      
     </div>
   );
 };

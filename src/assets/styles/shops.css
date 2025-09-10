@@ -55,13 +55,13 @@
 .floating_menu {
   position: fixed;
   right: 16px;
-  top: 16px;
+  top: calc(84px + env(safe-area-inset-top, 0)); /* below sticky header */
   background-color: white;
   width: 120px;
   padding-left: 15px;
   padding-right: 15px;
   border-radius: 10px;
-  z-index: 1001;
+  z-index: 100500; /* above header */
 }
 .flm_butts {
   float: right;
@@ -83,7 +83,10 @@
 }
 .item_view {
   width: 100%;
-  height: 100%;
+  height: 91%;
+  padding-bottom: 10%;
+  overflow: scroll;
+  /* border: 2px solid red; */
 }
 .item_view_image {
   background-position: center;
@@ -167,7 +170,8 @@
 }
 .cart_view {
   width: 100%;
-  height: 100%;
+  height: 90%;
+  /* border: 2px solid red; */
   overflow: auto;
 }
 .cv_hd {
@@ -243,9 +247,11 @@
 }
 .check_out {
   padding: 15px;
-  background-color: rgb(204, 204, 204);
+  /* background-color: rgb(204, 204, 204); */
   font-weight: 600;
   border-radius: 10px;
+  border: 1px solid gray;
+
 }
 .check_out_bar {
   position: fixed;
@@ -265,7 +271,7 @@
 .cv_grid{ display: grid; gap: 16px; }
 .cv_list{ display: grid; gap: 12px; }
 .cv_summary{
-  display: none;
+  display: block; /* show summary on all screen sizes */
   position: sticky;
   top: 88px;
   align-self: start;
@@ -277,7 +283,7 @@
 }
 .cv_row{ display:flex; justify-content: space-between; margin: 8px 0; font-size: 14px; }
 .cv_row.total{ font-weight: 700; font-size: 16px; margin-top: 12px; }
-.cv_summary_cta{ margin-top: 12px; display: flex; }
+.cv_summary_cta{ margin-top: 12px; display: flex;; }
 .order_confirm {
   position: fixed;
   inset: 0;

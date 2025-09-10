@@ -1,12 +1,13 @@
 import { SearchOutlined } from "@mui/icons-material";
 import "../../assets/styles/estate.css";
 import { useGiraf } from "../../giraf";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import testImage from "../../assets/images/dailybread.jpg";
 import LazyBg from "../../components/LazyBg";
 import { ArrowLeftOutlined, ArrowRightOutlined } from "@ant-design/icons";
 import useAxios from "../../hooks/useAxios";
 import { baseUrl, useGetApi } from "../../../bff/hooks";
+import { createWarmupController, warmUpAbcLibrary } from "@/estate/cache";
 import { useNavigate } from "react-router-dom";
 import egwLogo from '../../assets/images/egw_logo.png'
 import pioneers from '../../assets/images/pioneers.jpeg'
@@ -24,6 +25,13 @@ const Estate = () => {
   const [library, setLirary] = useState([])
   const [loading, setLoading] = useState(false);
   const [pioneer, setPioneer] = useState([])
+  // ABC Library download session
+  const [dlAbc, setDlAbc] = useState({ active:false, current:0, total:0, label:'', paused:false });
+  const warmRefAbc = useRef(null);
+  const SESSION_ABC = 'abcLibraryDl';
+  const saveAbc = (s)=>{ try{ localStorage.setItem(SESSION_ABC, JSON.stringify(s)); }catch{} };
+  const loadAbc = ()=>{ try{ const v = localStorage.getItem(SESSION_ABC); return v? JSON.parse(v): null; }catch{ return null; } };
+  const clearAbc = ()=>{ try{ localStorage.removeItem(SESSION_ABC); }catch{} };
 
   const navigate = useNavigate();
   useEffect(() => {
@@ -106,6 +114,23 @@ const Estate = () => {
         setLoading(false);
       });
   }, []);
+
+  // Resume ABC library download if present
+  useEffect(()=>{ const s = loadAbc(); if (s?.active) setDlAbc(s); },[])
+
+  const startAbcDownload = async () => {
+    const ctrl = createWarmupController();
+    warmRefAbc.current = ctrl;
+    const sess = { active:true, paused:false, current:0, total:0, label:'Preparing library…' };
+    setDlAbc(sess); saveAbc(sess);
+    await warmUpAbcLibrary(library, (p)=>{
+      setDlAbc((d)=>{ const nd = { ...d, ...p, active:true }; saveAbc(nd); return nd; });
+    }, ctrl);
+    clearAbc(); setDlAbc({ active:false, current:0, total:0, label:'', paused:false });
+  };
+  const pauseAbc = ()=>{ const c = warmRefAbc.current; if (!c) return; c.pause(); setDlAbc((d)=>{ const nd={...d, paused:true}; saveAbc(nd); return nd; }); };
+  const resumeAbc = ()=>{ const c = warmRefAbc.current; if (c) { c.resume(); setDlAbc((d)=>{ const nd={...d, paused:false}; saveAbc(nd); return nd; }); return; } startAbcDownload(); };
+  const cancelAbc = ()=>{ const c = warmRefAbc.current; if (c) c.cancel(); clearAbc(); setDlAbc({ active:false, current:0, total:0, label:'', paused:false }); };
 
   return (
     <div className="nav_page estate">
@@ -371,7 +396,7 @@ const Estate = () => {
             }}
           >
             <p className="est_long_hd_t">ABC Library</p>
-            <ArrowRightOutlined
+          <ArrowRightOutlined
               onClick={() => {
                 setSwitchmenus(true);
                 setFocused((t) => {
@@ -406,6 +431,7 @@ const Estate = () => {
             <p className="est_long_hd_t">ABC Library</p>
           </div>
         )}
+        
         <div
           className={`${
             !focused || focused == "abc"
@@ -442,15 +468,15 @@ const Estate = () => {
           {library.map((item, index) => {
             return (
               <div className="est_side_lister_item focused" key={index} 
-              onClick={()=>{
-                navigate("/viewer/pdf",{
-                  state: {
-                    something: "something",
-                    back:'estate',
-                  path: testPdf,
-                },
-                })
-              }}
+                onClick={()=>{
+                  navigate("/viewer/pdf",{
+                    state: {
+                      back:'estate',
+                      path: item.url,
+                      src: `${baseUrl}static/read/pdf?pdfUrl=${item.url}`
+                    },
+                  })
+                }}
               >
                 <LazyBg
                   className="est_side_lister_item_img"
@@ -461,6 +487,15 @@ const Estate = () => {
                   <p className="est_side_lister_item_text_sub">
                     By : {item.author}
                   </p>
+                  <div style={{ marginTop: 6 }}>
+                    <button
+                      onClick={(e)=>{ e.stopPropagation(); saveAbcItem(item); }}
+                      disabled={!!abcSaving[item.url] || !!abcSaved[item.url]}
+                      style={{ fontSize:12, padding:'6px 10px', border:'1px solid #0a7ea4', borderRadius:6, background:'#fff', color:'#0a7ea4' }}
+                    >
+                      {abcSaved[item.url] ? 'Offline ✓' : (abcSaving[item.url] ? 'Saving…' : 'Save offline')}
+                    </button>
+                  </div>
                 </div>
               </div>
             );

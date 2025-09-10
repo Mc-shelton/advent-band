@@ -16,14 +16,46 @@ const Discover = () => {
   const [periodicals, setPeriodicals] = useState(articles);
   const [loading, setLoading] = useState(false);
   const [filter, setFilter] = useState("");
+  const [saving, setSaving] = useState({}); // url => bool
+  const [saved, setSaved] = useState({});   // url => bool
 
   const navigate = useNavigate();
 
   // Use only local bundled data for Discover
   // No network fetch here to avoid blank state changes
+  const getProxiedPdf = (url) => `${baseUrl}static/read/pdf?pdfUrl=${encodeURIComponent(url || '')}`;
   useEffect(() => {
     setPeriodicals(articles);
+    const m = {};
+    (articles || []).forEach((it) => {
+      const key = it?.url ? getProxiedPdf(it.url) : null;
+      if (key && localStorage.getItem(`discoverSaved:${key}`) === '1') m[key] = true;
+    });
+    setSaved(m);
   }, []);
+
+  const cachePdf = async (url) => {
+    try{
+      const cache = await caches.open('pdf-v1');
+      const req = new Request(url, { mode:'cors' });
+      const match = await cache.match(req);
+      if (match) return true;
+      const resp = await fetch(req);
+      if (resp && resp.ok) await cache.put(req, resp.clone());
+      return true;
+    } catch { return false; }
+  };
+  const saveArticleOffline = async (item) => {
+    const url = item?.url; if (!url) return;
+    const proxied = getProxiedPdf(url);
+    setSaving((s)=>({ ...s, [proxied]: true }));
+    try{
+      const ok = await cachePdf(proxied);
+      if (ok){ localStorage.setItem(`discoverSaved:${proxied}`, '1'); setSaved((s)=>({ ...s, [proxied]: true })); }
+    } finally {
+      setSaving((s)=>({ ...s, [proxied]: false }));
+    }
+  };
 
   return (
     <div className="discover nav_page">
@@ -107,6 +139,15 @@ const Discover = () => {
               <p className="ds_box_t">By : {item?.author || "Unkown"}</p>
               {/* <br/> */}
               <p className="ds_box_hd">{toCamelCase(item?.title)}</p>
+              <div style={{ marginTop: 6,paddingLeft:'10px', textAlign:'left' }}>
+                <button
+                  onClick={(e)=>{ e.stopPropagation(); saveArticleOffline(item); }}
+                  disabled={!!saving[getProxiedPdf(item?.url)] || !!saved[getProxiedPdf(item?.url)]}
+                  style={{ fontSize:12, padding:'6px 10px', border:'1px solid #0a7ea4', borderRadius:6, background:'#fff', color:'#0a7ea4' }}
+                >
+                  {saved[getProxiedPdf(item?.url)] ? 'Offline ✓' : (saving[getProxiedPdf(item?.url)] ? 'Saving…' : 'Save offline')}
+                </button>
+              </div>
               <div
                 style={{
                   height: "15px",

@@ -107,13 +107,21 @@ const Community = () => {
           <div className="comm_nav">
             <p
               onClick={() => {
-                if (gHead.prev_view_key) {
-                  let prev = gHead.comm_page_prev;
-                  // let t = prev.pop();
-                  addGHead("comm_page_prev", prev);
-                  addGHead(gHead.prev_view_key, gHead.prev_view_value);
-                  // addGHead("room_view", 'room_main');
-                }
+                // Restore previous view and shrink the back-stack
+                try{
+                  const prevStack = Array.isArray(gHead.comm_page_prev) ? [...gHead.comm_page_prev] : [];
+                  if (gHead.prev_view_key) {
+                    addGHead(gHead.prev_view_key, gHead.prev_view_value);
+                  }
+                  // Remove the last entry so the top menu can reappear when stack is empty
+                  if (prevStack.length > 0) prevStack.pop();
+                  addGHead('comm_page_prev', prevStack);
+                  // Optionally clear the prev_view refs when stack empties
+                  if (prevStack.length === 0) {
+                    addGHead('prev_view_key', undefined);
+                    addGHead('prev_view_value', undefined);
+                  }
+                }catch(e){/* noop */}
               }}
               style={{
                 display: "flex",

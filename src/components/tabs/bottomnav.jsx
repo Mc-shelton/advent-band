@@ -59,9 +59,9 @@ const BottomNav = () => {
     if(index ==1){
       addGHead('s_t', "Bible")
       // set a readable default for the Bible mini tab
-      if (!gHead.bible_ref) addGHead("bible_ref", `Genesis 1`)
-      addGHead("bsearch", true)
-      addGHead("showBooks", true)
+      if (!gHead.bible_ref) addGHead("bible_ref", `Mwanzo 1`)
+        if (!gHead.bible_ref) addGHead("bsearch", true)
+      if (!gHead.bible_ref) addGHead("showBooks", true)
     }
     const path = menuItems[index].path;
     // Ensure the chunk is requested, then navigate
@@ -87,15 +87,29 @@ const BottomNav = () => {
                   addGHead("showBooks", true)
                 }
             }}>
-                <ChevronLeftOutlined/>
+                <ChevronLeftOutlined onClick={(e)=>{
+                  e.stopPropagation();
+                  if (selected === 1){
+                    addGHead('bible_nav','prev');
+                  } else if (selected === 2){
+                    addGHead('hymn_nav','prev');
+                  }
+                }}/>
                 <p className="base_p">
                   {selected === 1
-                    ? (gHead.bible_ref || 'Genesis 1')
+                    ? (gHead.bible_ref || 'Mwanzo 1')
                     : selected === 2
                       ? ('Hymn ' + (gHead.s_n?.padStart(3,'0') || '001'))
                       : ''}
                 </p>
-                <ChevronRightOutlinedIcon/>
+                <ChevronRightOutlinedIcon onClick={(e)=>{
+                  e.stopPropagation();
+                  if (selected === 1){
+                    addGHead('bible_nav','next');
+                  } else if (selected === 2){
+                    addGHead('hymn_nav','next');
+                  }
+                }}/>
             </div>
         </div>}
         <div className="nav">

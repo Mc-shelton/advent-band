@@ -156,7 +156,7 @@ const CartView = () => {
               </div>
             </div>
           </aside>
-          <h2 className="cv_total">Total: ${calculateTotal()}</h2>
+          {/* <h2 className="cv_total">Total: ${calculateTotal()}</h2> */}
           <div className="check_out_bar">
             <div className="check_out" onClick={pushOrder} aria-label="Proceed to checkout">
               Check Out

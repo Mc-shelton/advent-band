@@ -3,8 +3,9 @@ import testImage from "../../../assets/images/dailybread.jpg";
 import "../../../assets/styles/lessons.css";
 import { useGiraf } from "../../../giraf";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { baseUrl, useGetApi } from "../../../../bff/hooks";
+import { createWarmupController, warmUpEgwBooks } from "@/estate/cache";
 import egwLogo from "../../../assets/images/egw_logo.png";
 
 const FolderBooks = () => {
@@ -16,6 +17,8 @@ const FolderBooks = () => {
   const location = useLocation();
   const [loading, setLoading] = useState(false);
   const { url, title, splash } = location.state || {};
+  const [saving, setSaving] = useState({}); // pubnr => bool
+  const [saved, setSaved] = useState({});  // pubnr => bool
 
   useEffect(() => {
     setLoading(true);
@@ -37,8 +40,27 @@ const FolderBooks = () => {
       });
   }, []);
 
+  useEffect(()=>{
+    const m = {};
+    (books||[]).forEach(b=>{ if (localStorage.getItem(`egwSaved:${b.pubnr}`)==='1') m[b.pubnr]=true; });
+    setSaved(m);
+  }, [books]);
+
+  const saveBookOffline = async (book) => {
+    if (!book) return;
+    setSaving((s)=>({ ...s, [book.pubnr]: true }));
+    try{
+      await warmUpEgwBooks([book], baseUrl, null, null);
+      localStorage.setItem(`egwSaved:${book.pubnr}`, '1');
+      setSaved((s)=>({ ...s, [book.pubnr]: true }));
+    } finally {
+      setSaving((s)=>({ ...s, [book.pubnr]: false }));
+    }
+  };
+
   return (
     <div className="lesson_books nav_page">
+      
       <div
         className="lsn_back"
         onClick={() => {
@@ -92,6 +114,15 @@ const FolderBooks = () => {
                   >
                     No. - {t.pubnr}
                   </p>
+                  <div style={{ marginTop: 6 }}>
+                    <button
+                      onClick={(e)=>{ e.stopPropagation(); saveBookOffline(t); }}
+                      disabled={!!saving[t.pubnr] || !!saved[t.pubnr]}
+                      style={{ fontSize:12, padding:'6px 10px', border:'1px solid #0a7ea4', borderRadius:6, background:'#fff', color:'#0a7ea4' }}
+                    >
+                      {saved[t.pubnr] ? 'Offline ✓' : (saving[t.pubnr] ? 'Saving…' : 'Save offline')}
+                    </button>
+                  </div>
                 </div>
               </div>
             );

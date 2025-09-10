@@ -13,22 +13,22 @@ const EgwViewer = () => {
 
   const { id_pub ,maxpuborder, splash, title, url} = location.state || {};
 
+  const [pct, setPct] = useState(0);
   useEffect(() => {
-    console.log(id_pub, maxpuborder);
     setLoading(true);
+    setPct(0);
     actionRequest({
-      endPoint: `${baseUrl}/estate/egw/content`,
-      params: {
-        id_pub,
-        maxpuborder, 
-      },
+      endPoint: `${baseUrl}estate/egw/content`,
+      params: { id_pub, maxpuborder },
+      onProgress: (e)=>{ try{ if (e?.total) setPct(Math.floor((e.loaded/e.total)*100)); }catch{} },
     })
       .then((res) => {
-        console.log("###########", res.data.elements.midd);
-        setContent(res.data.elements.middle);
+        setContent(res?.data?.elements?.middle || res?.elements?.middle || []);
+        setPct((p)=> p || 100);
       })
       .catch((err) => {
-        console.log(err);
+        // eslint-disable-next-line no-console
+        console.error(err);
       })
       .finally(() => {
         setLoading(false);
@@ -69,7 +69,7 @@ const EgwViewer = () => {
       <div className="reader">
         <div className="reader_inner">
           {loading ? (
-            <div>Loading...</div>
+            <div style={{ padding: 12, fontSize: 12, color: '#333' }}>Loading {pct || 0}%</div>
           ) : (
             content.map((t, x) => {
               return (

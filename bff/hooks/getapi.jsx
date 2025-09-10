@@ -16,7 +16,7 @@ function useGetApi() {
     const headerConfig = {"x-api-key": apiKeys, Authorization:'Bearer '+(Cookies.get('auth_token') || Cookies.get('AuthToken')?.replace('Bearer ','') )}
 
 
-    const actionRequest = async ({ endPoint, params, hd, cacheKey, strategy = 'network-first', cacheTtlMs = 5 * 60 * 1000, onUpdate }) => {
+    const actionRequest = async ({ endPoint, params, hd, cacheKey, strategy = 'network-first', cacheTtlMs = 5 * 60 * 1000, onUpdate, onProgress, responseType }) => {
         setError(null);
 
         const storageKey = cacheKey ? `api_cache:${cacheKey}` : null;
@@ -37,7 +37,7 @@ function useGetApi() {
             // Background refresh (no throw)
             (async () => {
                 try {
-                    const response = await axios.get(endPoint, { params: params, headers: { ...headerConfig, ...hd } });
+                    const response = await axios.get(endPoint, { params: params, headers: { ...headerConfig, ...hd }, ...(onProgress? { onDownloadProgress: onProgress }: {}), ...(responseType? { responseType } : {}) });
                     const fresh = response.data;
                     const changed = JSON.stringify(fresh) !== JSON.stringify(cachedEntry.data);
                     if (changed || !hasFreshCache) {
@@ -54,7 +54,7 @@ function useGetApi() {
         setData(null);
         setLoading(true);
         try {
-            const response = await axios.get(endPoint, { params: params, headers: { ...headerConfig, ...hd } });
+            const response = await axios.get(endPoint, { params: params, headers: { ...headerConfig, ...hd }, ...(onProgress? { onDownloadProgress: onProgress }: {}), ...(responseType? { responseType } : {}) });
             const data = response.data;
             if (storageKey) {
                 try { localStorage.setItem(storageKey, JSON.stringify({ ts: Date.now(), data })); } catch (_) {}
