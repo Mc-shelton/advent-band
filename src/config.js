@@ -3,11 +3,11 @@
 
 export const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, "/") ||
-  "https://api.adventband.org/api/v1/";
+  "https://backend.adventband.org/api/v1/";
 
 export const WS_URL =
   import.meta.env.VITE_WS_URL ||
-  "wss://api.adventband.org";
+  "wss://backend.adventband.org";
 
 export const API_KEY = import.meta.env.VITE_API_KEY || "";
 

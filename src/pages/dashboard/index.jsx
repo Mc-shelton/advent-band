@@ -365,7 +365,7 @@ const DashboardDefault = () => {
                   refCallback={(el) => (playersRef.current["mission"] = el)}
                   src={
                     periodicals?.url ||
-                    "https://adventband.org/system/sermons/a_major.mp3"
+                    "https://adventband.org/bucket/sermons/a_major.mp3"
                   }
                 />
               )}
@@ -414,7 +414,7 @@ const DashboardDefault = () => {
                   refCallback={(el) => (playersRef.current["vop"] = el)}
                   src={
                     vop?.url ||
-                    "https://adventband.org/system/sermons/a_major.mp3"
+                    "https://adventband.org/bucket/sermons/a_major.mp3"
                   }
                 />
               )}
@@ -427,9 +427,9 @@ const DashboardDefault = () => {
           {sermons.map((sermon, x) => {
             const isPlaying = playingId === sermon.id;
             let testAudios = [
-              "https://adventband.org/system/sermons/test_audio.mp3",
-              "https://adventband.org/system/sermons/a_major.mp3",
-              "https://adventband.org/system/sermons/a_major.mp3",
+              "https://adventband.org/bucket/sermons/test_audio.mp3",
+              "https://adventband.org/bucket/sermons/a_major.mp3",
+              "https://adventband.org/bucket/sermons/a_major.mp3",
             ];
             sermon.url = testAudios[sermon.id];
             return (
