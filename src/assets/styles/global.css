@@ -314,4 +314,12 @@ textarea{
   --radius-2: 12px;
   --radius-3: 16px;
   --container-max: 1200px;
+  /* Reserve space for fixed bottom nav across views */
+  /* --bottom-nav-safe: calc(112px + env(safe-area-inset-bottom, 0px)); */
+}
+
+/* Ensure page content is not hidden behind the fixed bottom nav */
+.nav_page {
+  /* border: 2px solid red; */
+  padding-bottom: var(--bottom-nav-safe);
 }

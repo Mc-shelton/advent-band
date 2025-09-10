@@ -5,6 +5,7 @@ import { useGiraf } from "../../../giraf";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { baseUrl, useGetApi } from "../../../../bff/hooks";
+import LazyBg from "../../../components/LazyBg";
 
 const LessonBooks = () => {
   const { gHead, addGHead } = useGiraf();
@@ -46,12 +47,7 @@ const LessonBooks = () => {
         <ArrowBackOutlined />
       </div>
 
-      <div
-        className="lsn_book_splash"
-        style={{
-          backgroundImage: `url(${splash})`,
-        }}
-      ></div>
+      <LazyBg className="lsn_book_splash" src={splash} />
       <p className="lsn_btt">
         {path?.split("/")[2]?.split("-").join(" - Q") || "Q-01"}
       </p>
@@ -83,12 +79,7 @@ const LessonBooks = () => {
                   });
                 }}
               >
-                <div
-                  className="lsn_book_spash"
-                  style={{
-                    backgroundImage: `url(${t.cover})`,
-                  }}
-                ></div>
+                <LazyBg className="lsn_book_spash" src={t.cover} />
                 <div className="lsn_book_text">
                   <p className="lsn_b_tt">
                     {t.path.split("/")[4]}. {t.title}

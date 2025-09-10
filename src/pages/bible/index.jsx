@@ -9,7 +9,7 @@ import useAxios from "../../hooks/useAxios";
 import { getBooksCached, getChaptersCached, getPassageCached, warmUpBible, isBibleReady, createWarmupController } from "@/bible/cache";
 import { LoadingOutlined } from "@ant-design/icons";
 const Bible = () => {
-  const [searchText, setSearchText] = useState(null);
+  const [searchText, setSearchText] = useState("");
   const { gHead, addGHead } = useGiraf();
   const [song, setSong] = useState(null);
   // If hymn data is needed here, load on demand to avoid blocking route mount
@@ -222,12 +222,14 @@ const Bible = () => {
           {loading && <LoadingOutlined />}
           {bibleLists
             .filter(
-              (b) =>
-                b.name.toLowerCase().includes(searchText.toLowerCase()) ||
-                b.language.name
-                  .toLowerCase()
-                  .includes(searchText.toLowerCase()) ||
-                b.abbreviation.toLowerCase().includes(searchText.toLowerCase())
+              (b) => {
+                const q = (searchText || '').toLowerCase();
+                return (
+                  b.name.toLowerCase().includes(q) ||
+                  b.language.name.toLowerCase().includes(q) ||
+                  b.abbreviation.toLowerCase().includes(q)
+                );
+              }
             )
             .map((b) => {
               return (

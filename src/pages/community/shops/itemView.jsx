@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { useGiraf } from "../../../giraf";
 import MessageBox from "../../../components/message";
 import { baseUrl, useGetApi } from "../../../../bff/hooks";
+import LazyBg from "../../../components/LazyBg";
 import Loading from "../../../components/loading";
 const ItemView = () => {
   const { gHead, addGHead } = useGiraf();
@@ -26,21 +27,23 @@ const ItemView = () => {
   useEffect(() => {
     actionRequest({
       endPoint: `${baseUrl}/shops/items/thumb_nails`,
-      params: {
-        item_id: item?.id,
-      },
+      params: { item_id: item?.id },
+      cacheKey: `shop_item_thumbs_${item?.id || 'unknown'}`,
+      strategy: 'cache-first',
+      cacheTtlMs: 60 * 60 * 1000,
+      onUpdate: (res) => {
+        setTestImages(res.data || []);
+        if (Array.isArray(res.data)) setImageIndex(parseInt(res.data.length / 2));
+      }
     })
       .then((res) => {
-        setTestImages((r) => {
-          console.log("existing r :: ", r);
-          return res.data;
-        });
-        setImageIndex(parseInt(res.data.length / 2));
-        console.log(res.data);
+        setTestImages((r) => res.data || []);
+        if (Array.isArray(res.data)) setImageIndex(parseInt(res.data.length / 2));
       })
       .catch(() => {
         pushMessage("failed getting images", "error");
-      }).finally(()=>{
+      })
+      .finally(() => {
         setLoading(false)
       })
   }, []);
@@ -105,17 +108,16 @@ const ItemView = () => {
         <MessageBox txt={message} type={messageType} key={"some key"} />
       )}
       <div>
-        <div
+        <LazyBg
           className="item_view_image"
-          style={{
-            backgroundImage: `url(${testImages[0]?.url || testImage})`,
-          }}
+          src={testImages[imageIndex]?.url}
+          placeholderColor="#f1f1f1"
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
         >
           <KeyboardArrowLeftOutlined className="arr_navs" onClick={handleSlideLeft} />
           <KeyboardArrowRightOutlined className="arr_navs" onClick={handleSlideRight} />
-        </div>
+        </LazyBg>
         <div className="slider_show">
           {testImages.map((l, x) => (
             <div key={x} style={{ backgroundColor: imageIndex == x && "rgb(218, 142, 0)" }} />

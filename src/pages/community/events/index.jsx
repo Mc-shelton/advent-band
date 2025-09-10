@@ -1,5 +1,6 @@
 import RepeatIcon from "@mui/icons-material/Repeat";
 import testImage from "../../../assets/images/dailybread.jpg";
+import LazyBg from "../../../components/LazyBg";
 import { useEffect, useState } from "react";
 import { useGiraf } from "../../../giraf";
 import { baseUrl, useGetApi } from "../../../../bff/hooks";
@@ -29,7 +30,13 @@ const Events = () => {
 
   useEffect(()=>{
     setLoading(true)
-    actionRequest({endPoint:`${baseUrl}events`}).then((res)=>{
+    actionRequest({
+      endPoint:`${baseUrl}events`,
+      cacheKey: 'events',
+      strategy: 'cache-first',
+      cacheTtlMs: 5 * 60 * 1000,
+      onUpdate: (res) => setEvents(res.data)
+    }).then((res)=>{
       setEvents(res.data)
     }).catch((err)=>{
       pushMessage(err.message, 'error')
@@ -65,12 +72,7 @@ const Events = () => {
             addGHead("focused_event", event)
           }}
           >
-        <div
-          className="ce_card_img"
-          style={{
-            backgroundImage: `url(${event.image})`,
-          }}
-        ></div>
+        <LazyBg className="ce_card_img" src={event.image} />
         <p className="ce_p1">{event.organizer}, {event.location}</p>
         <p className="ce_p2">{getDate(new Date(event.date))}</p>
         <p className="ce_p3">

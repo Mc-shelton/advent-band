@@ -1,9 +1,11 @@
-/* .hymns{
-    background-color: red;
-} */
+.hymns{
+    height: 81%;
+    overflow: scroll;
+    /* padding-top: 5%; */
+}
 .hymns .container{
     height: 100%;
-    padding-top: 10%;
+    /* padding-top: 5%; */
 }
 .hymns .container .l{
     height: 90%;
@@ -11,7 +13,7 @@
 }
 .l .lister{
     /* margin-top: 15%; */
-    padding-top: 20%;
+    padding-top: 5%;
     height: 100%;
     padding-bottom: 10%;
     overflow: scroll;

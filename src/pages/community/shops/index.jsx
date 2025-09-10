@@ -47,7 +47,13 @@ const Shops = () => {
 
   useEffect(()=>{
     setLoading(true)
-    actionRequest({endPoint:`${baseUrl}shops/items`}).then((res)=>{
+    actionRequest({
+      endPoint:`${baseUrl}shops/items`,
+      cacheKey: 'shop_items',
+      strategy: 'cache-first',
+      cacheTtlMs: 10 * 60 * 1000,
+      onUpdate: (res) => setItems(res.data)
+    }).then((res)=>{
       setItems(res.data)
     }).catch((err)=>{
       pushMessage(err.message, 'error')

@@ -47,3 +47,15 @@ createRoot(document.getElementById('root')).render(
 //     <Root />
 //   </StrictMode>
 // );
+// Global runtime error logging to catch silent failures
+if (typeof window !== 'undefined') {
+  window.addEventListener('error', (e) => {
+    // Avoid noisy logs from passive network errors
+    // eslint-disable-next-line no-console
+    console.error('[GlobalError]', e?.error || e?.message, e?.filename, e?.lineno, e?.colno, e?.error?.stack)
+  });
+  window.addEventListener('unhandledrejection', (e) => {
+    // eslint-disable-next-line no-console
+    console.error('[UnhandledRejection]', e?.reason);
+  });
+}

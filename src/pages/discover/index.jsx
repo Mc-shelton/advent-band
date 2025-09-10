@@ -1,41 +1,29 @@
 import { SearchOutlined } from "@mui/icons-material";
 import "../../assets/styles/discover.css";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useGiraf } from "../../giraf";
 import testAvator from "../../assets/images/dailybread.jpg";
 import { ClockCircleOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import { baseUrl, useGetApi } from "../../../bff/hooks";
+import { baseUrl } from "../../../bff/hooks";
+import LazyBg from "../../components/LazyBg";
 import articles from "../../assets/db/articles_db.json";
 import toCamelCase from "../../../bff/lib/toCamelCase";
 
 const Discover = () => {
-  const [searchText, setSearchText] = useState();
+  const [searchText, setSearchText] = useState("");
   const { gHead, addGHead } = useGiraf();
   const [periodicals, setPeriodicals] = useState(articles);
-  const { actionRequest } = useGetApi();
   const [loading, setLoading] = useState(false);
   const [filter, setFilter] = useState("");
 
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   setLoading(true);
-  //   actionRequest({
-  //     endPoint: `${baseUrl}periodicals/articles`,
-  //     params: {},
-  //   })
-  //     .then((res) => {
-  //       console.log(res);
-  //       setPeriodicals(res.data);
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //     })
-  //     .finally(() => {
-  //       setLoading(false);
-  //     });
-  // }, []);
+  // Use only local bundled data for Discover
+  // No network fetch here to avoid blank state changes
+  useEffect(() => {
+    setPeriodicals(articles);
+  }, []);
 
   return (
     <div className="discover nav_page">
@@ -67,60 +55,64 @@ const Discover = () => {
         </div>
       </div>
       <div className="slid_butts">
-        {[...new Set(periodicals.map((item) => item.category))].map((item) => {
-          return (
-            <p
-              key={item}
-              onClick={() => setFilter((prev) => item)}
-              style={{
-                border: filter == item && "1px solid gray",
-              }}
-            >
-              {item}
-            </p>
-          );
-        })}
+        {[...new Set((periodicals || []).map((item) => item.category || ""))]
+          .filter(Boolean)
+          .map((item) => {
+            return (
+              <p
+                key={item}
+                onClick={() => setFilter((prev) => item)}
+                style={{
+                  border: filter == item && "1px solid gray",
+                }}
+              >
+                {item}
+              </p>
+            );
+          })}
       </div>
       <div className="ds_container">
         {periodicals
-          .filter((item) => (filter ? item.category == filter : true)).filter((item => searchText ? (item.title.toLowerCase().includes(searchText.toLowerCase()) || item.author.toLowerCase().includes(searchText.toLowerCase())):true))
+          .filter((item) => (filter ? item?.category == filter : true))
+          .filter((item) =>
+            searchText
+              ? item?.title.toLowerCase().includes(searchText.toLowerCase()) ||
+                item?.author.toLowerCase().includes(searchText.toLowerCase())
+              : true
+          )
           .map((item, index) => (
             <div
               className="ds_box"
-              key={item.id}
+              key={item?.id}
               onClick={() => {
                 navigate("/viewer/pdf", {
                   state: {
                     back: "discover",
-                    path: item.url,
-                    src: `${baseUrl}static/read/pdf?pdfUrl=${item.url}`,
+                    path: item?.url,
+                    src: `${baseUrl}static/read/pdf?pdfUrl=${item?.url}`,
                   },
                 });
               }}
             >
-              <br/>
+              <br />
 
-              <div
+              <LazyBg
                 className="ds_box_ava"
-                style={{
-                  backgroundImage: `url(${item.thumbNail || testAvator})`,
-                }}
-              ></div>
-              <br/>
+                src={item?.thumbNail || testAvator}
+              />
+              <br />
               <p className="ds_box_t">
-                <ClockCircleOutlined /> {item.avTime} Read
+                <ClockCircleOutlined /> {item?.avTime} Read
               </p>
-              <p className="ds_box_t">
-                By : {item.author || 'Unkown'}
-              </p>
+              <p className="ds_box_t">By : {item?.author || "Unkown"}</p>
               {/* <br/> */}
-              <p className="ds_box_hd">{toCamelCase(item.title)}</p>
-              <div style={{
-                height:"15px"
-              }}/>
-
+              <p className="ds_box_hd">{toCamelCase(item?.title)}</p>
+              <div
+                style={{
+                  height: "15px",
+                }}
+              />
             </div>
-
           ))}
       </div>
     </div>

@@ -3,8 +3,9 @@
 }
 .bcontainer{
     margin-top: 10%;
-    height: 83%;
+    height: 71%;
     overflow: scroll;
+    /* border: 2px solid red; */
     
 }
 .bcontainer h2{
@@ -31,9 +32,10 @@
 }
 .blister{
     /* margin-top: 20%; */
-    max-height: 78%;
+    max-height: 63%;
     overflow: scroll;
     /* padding-top: 10%; */
+    /* border: 2px solid red; */
 }
 .blister .bible_list{
     text-align: left;

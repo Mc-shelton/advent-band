@@ -3,6 +3,7 @@ import "../../assets/styles/estate.css";
 import { useGiraf } from "../../giraf";
 import { useEffect, useState } from "react";
 import testImage from "../../assets/images/dailybread.jpg";
+import LazyBg from "../../components/LazyBg";
 import { ArrowLeftOutlined, ArrowRightOutlined } from "@ant-design/icons";
 import useAxios from "../../hooks/useAxios";
 import { baseUrl, useGetApi } from "../../../bff/hooks";
@@ -30,9 +31,12 @@ const Estate = () => {
     actionRequest({
       endPoint: `${baseUrl}estate/pioneers`,
       params: {},
+      cacheKey: 'estate_pioneers',
+      strategy: 'cache-first',
+      cacheTtlMs: 30 * 60 * 1000,
+      onUpdate: (res) => setPioneer(res.data)
     })
       .then((res) => {
-        console.log(res);
         setPioneer(res.data)
       })
       .catch((err) => {
@@ -41,12 +45,16 @@ const Estate = () => {
       .finally(() => {
         setLoading(false);
       });
+
     actionRequest({
       endPoint: `${baseUrl}estate/quarterlies`,
       params: {},
+      cacheKey: 'estate_quarterlies',
+      strategy: 'cache-first',
+      cacheTtlMs: 30 * 60 * 1000,
+      onUpdate: (res) => setLesson(res.data)
     })
       .then((res) => {
-        console.log(res);
         setLesson(res.data);
       })
       .catch((err) => {
@@ -59,14 +67,18 @@ const Estate = () => {
     actionRequest({
       endPoint: `${baseUrl}estate/egw`,
       params: {},
+      cacheKey: 'estate_egw',
+      strategy: 'cache-first',
+      cacheTtlMs: 60 * 60 * 1000,
+      onUpdate: (res) => {
+        let engFolder = res.data?.find((item) => item.title.toLowerCase().includes("eng"));
+        let egwWrittigns = engFolder?.children.find((item) => item.title.toLowerCase().includes("egw"));
+        setEgw(egwWrittigns?.children);
+      }
     })
       .then((res) => {
-        let engFolder = res.data?.find((item) =>
-          item.title.toLowerCase().includes("eng")
-        );
-        let egwWrittigns = engFolder?.children.find((item) =>
-          item.title.toLowerCase().includes("egw")
-        );
+        let engFolder = res.data?.find((item) => item.title.toLowerCase().includes("eng"));
+        let egwWrittigns = engFolder?.children.find((item) => item.title.toLowerCase().includes("egw"));
         setEgw(egwWrittigns?.children);
       })
       .catch((err) => {
@@ -79,6 +91,10 @@ const Estate = () => {
     actionRequest({
       endPoint: `${baseUrl}periodicals/books`,
       params: {},
+      cacheKey: 'periodicals_books',
+      strategy: 'cache-first',
+      cacheTtlMs: 30 * 60 * 1000,
+      onUpdate: (res) => setLirary(res.data)
     })
       .then((res) => {
        setLirary(res.data)
@@ -217,12 +233,10 @@ const Estate = () => {
                     });
                   }}
                 >
-                  <div
+                  <LazyBg
                     className="est_side_lister_item_img"
-                    style={{
-                      backgroundImage: `url(${egwLogo})`,
-                    }}
-                  ></div>
+                    src={egwLogo}
+                  />
                   <div className="est_side_lister_item_text">
                     <p className="est_side_lister_item_text_hd">{item.title}</p>
                     <p className="est_side_lister_item_text_sub">
@@ -319,12 +333,10 @@ const Estate = () => {
           {pioneer.map((item, index) => {
             return (
               <div className="est_side_lister_item focused" key={index}>
-                <div
-                key={index}
+                <LazyBg
+                  key={index}
                   className="est_side_lister_item_img"
-                  style={{
-                    backgroundImage: `url(${pioneers})`,
-                  }}
+                  src={pioneers}
                   onClick={() => {
                     // alert()
                     navigate(`/estate/egw`, {
@@ -335,7 +347,7 @@ const Estate = () => {
                       },
                     });
                   }}
-                ></div>
+                />
                 <div className="est_side_lister_item_text">
                   <p className="est_side_lister_item_text_hd">
                     {item.title}
@@ -440,12 +452,10 @@ const Estate = () => {
                 })
               }}
               >
-                <div
+                <LazyBg
                   className="est_side_lister_item_img"
-                  style={{
-                    backgroundImage: `url(${testImage})`,
-                  }}
-                ></div>
+                  src={item.cover || testImage}
+                />
                 <div className="est_side_lister_item_text">
                   <p className="est_side_lister_item_text_hd">{item.title}</p>
                   <p className="est_side_lister_item_text_sub">
@@ -551,12 +561,10 @@ const Estate = () => {
                     });
                   }}
                 >
-                  <div
+                  <LazyBg
                     className="est_side_lister_item_img"
-                    style={{
-                      backgroundImage: `url(${item.cover})`,
-                    }}
-                  ></div>
+                    src={item.cover}
+                  />
                   <div className="est_side_lister_item_text">
                     <p className="est_side_lister_item_text_hd">{item.title}</p>
                     <p className="est_side_lister_item_text_sub">

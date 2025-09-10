@@ -30,7 +30,15 @@ function App() {
       // ignore invalid token
     }
     // connnect to socket
-    actionRequest({ endPoint: `${baseUrl}rooms` })
+    actionRequest({
+      endPoint: `${baseUrl}rooms`,
+      cacheKey: 'rooms',
+      strategy: 'cache-first',
+      cacheTtlMs: 5 * 60 * 1000,
+      onUpdate: (res) => {
+        addGHead("user_rooms", res.data);
+      }
+    })
       .then((res) => {
         addGHead("user_rooms", res.data);
 

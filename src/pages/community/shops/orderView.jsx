@@ -42,7 +42,13 @@ const OrderView = () => {
 
   useEffect(() => {
     setLoading(true);
-    actionRequest({ endPoint: `${baseUrl}shops/orders` })
+    actionRequest({
+      endPoint: `${baseUrl}shops/orders`,
+      cacheKey: 'shop_orders',
+      strategy: 'cache-first',
+      cacheTtlMs: 2 * 60 * 1000, // orders change often; short TTL
+      onUpdate: (res) => setCartItems(res.data)
+    })
       .then((res) => {
         setCartItems(res.data);
       })

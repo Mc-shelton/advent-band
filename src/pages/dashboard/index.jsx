@@ -1,7 +1,7 @@
 import CButton from "../../components/buttton";
 import "../../assets/styles/global.css";
 import "../../assets/styles/dashboard.css";
-import { useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import ElectricMeterOutlinedIcon from "@mui/icons-material/ElectricMeterOutlined";
 import AttractionsOutlinedIcon from "@mui/icons-material/AttractionsOutlined";
 import BoltIcon from "@mui/icons-material/Bolt";
@@ -24,7 +24,7 @@ import { ClockCircleOutlined, EyeOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import PdfViewer from "../viewers/pdfViewer";
 import { baseUrl, useGetApi } from "../../../bff/hooks";
-import AudioPlayer from "../../components/player";
+const AudioPlayer = lazy(() => import("../../components/player"));
 // Defer loading sermons data to avoid blocking route load on mobile
 
 const DashboardDefault = () => {
@@ -38,6 +38,8 @@ const DashboardDefault = () => {
   const { actionRequest } = useGetApi();
   const devotionalRef = useRef();
   const [sermons, setSermons] = useState([]);
+  const [visibleCount, setVisibleCount] = useState(6);
+  const loadMoreRef = useRef(null);
   const playersRef = useRef({});
 
   const navigate = useNavigate();
@@ -46,10 +48,23 @@ const DashboardDefault = () => {
     setM(t);
   };
   useEffect(() => {
-    actionRequest({ endPoint: `${baseUrl}periodicals` }).then((res) => {
-      let p1 = res.data.find((t) => t.type == "p1");
-      let p2 = res.data.find((t) => t.type == "p2");
-      let p3 = res.data.find((t) => t.type == "p3");
+    actionRequest({
+      endPoint: `${baseUrl}periodicals`,
+      cacheKey: 'periodicals',
+      strategy: 'cache-first',
+      cacheTtlMs: 10 * 60 * 1000,
+      onUpdate: (res) => {
+        const p1 = res.data.find((t) => t.type == "p1");
+        const p2 = res.data.find((t) => t.type == "p2");
+        const p3 = res.data.find((t) => t.type == "p3");
+        setProphecy(p1);
+        setPeriodicals(p2);
+        setVop(p3);
+      }
+    }).then((res) => {
+      const p1 = res.data.find((t) => t.type == "p1");
+      const p2 = res.data.find((t) => t.type == "p2");
+      const p3 = res.data.find((t) => t.type == "p3");
       setProphecy(p1);
       setPeriodicals(p2);
       setVop(p3);
@@ -82,6 +97,21 @@ const DashboardDefault = () => {
     });
     return () => { active = false; };
   }, []);
+
+  // Incrementally render more sermons when scrolled near the bottom
+  useEffect(() => {
+    if (!loadMoreRef.current) return;
+    const el = loadMoreRef.current;
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setVisibleCount((c) => Math.min(c + 6, sermons.length || c + 6));
+        }
+      });
+    }, { rootMargin: '200px' });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [sermons.length]);
 
   const handlePlay = (id) => {
     // Pause previous audio if another one is playing
@@ -360,14 +390,16 @@ const DashboardDefault = () => {
                 </div>
               </div>
               {playingId == "mission" && (
-                <AudioPlayer
-                  sermonId={"mission"}
-                  refCallback={(el) => (playersRef.current["mission"] = el)}
-                  src={
-                    periodicals?.url ||
-                    "https://adventband.org/bucket/sermons/a_major.mp3"
-                  }
-                />
+                <Suspense fallback={null}>
+                  <AudioPlayer
+                    sermonId={"mission"}
+                    refCallback={(el) => (playersRef.current["mission"] = el)}
+                    src={
+                      periodicals?.url ||
+                      "https://adventband.org/bucket/sermons/a_major.mp3"
+                    }
+                  />
+                </Suspense>
               )}
             </div>
             <div
@@ -409,14 +441,16 @@ const DashboardDefault = () => {
                 </div>
               </div>
               {playingId == "vop" && (
-                <AudioPlayer
-                  sermonId={"vop"}
-                  refCallback={(el) => (playersRef.current["vop"] = el)}
-                  src={
-                    vop?.url ||
-                    "https://adventband.org/bucket/sermons/a_major.mp3"
-                  }
-                />
+                <Suspense fallback={null}>
+                  <AudioPlayer
+                    sermonId={"vop"}
+                    refCallback={(el) => (playersRef.current["vop"] = el)}
+                    src={
+                      vop?.url ||
+                      "https://adventband.org/bucket/sermons/a_major.mp3"
+                    }
+                  />
+                </Suspense>
               )}
             </div>
           </div>
@@ -424,7 +458,7 @@ const DashboardDefault = () => {
         <div className="d_content">
           <p className="dc_p1">Sermons</p>
 
-          {sermons.map((sermon, x) => {
+          {(sermons || []).slice(0, visibleCount).map((sermon, x) => {
             const isPlaying = playingId === sermon.id;
             let testAudios = [
               "https://adventband.org/bucket/sermons/test_audio.mp3",
@@ -433,7 +467,7 @@ const DashboardDefault = () => {
             ];
             sermon.url = testAudios[sermon.id];
             return (
-              <div className="d_holder">
+              <div className="d_holder" key={x}>
                 <div className="d_holder_cont">
                   <div
                     className="d_av"
@@ -464,15 +498,19 @@ const DashboardDefault = () => {
                   </div>
                 </div>
                 {isPlaying && (
-                  <AudioPlayer
-                    sermonId={sermon.id}
-                    refCallback={(el) => (playersRef.current[sermon.id] = el)}
-                    src={sermon.link}
-                  />
+                  <Suspense fallback={null}>
+                    <AudioPlayer
+                      sermonId={sermon.id}
+                      refCallback={(el) => (playersRef.current[sermon.id] = el)}
+                      src={sermon.link}
+                    />
+                  </Suspense>
                 )}
               </div>
             );
           })}
+          {/* Sentinel for lazy-loading more sermons */}
+          <div ref={loadMoreRef} />
         </div>
       </div>
     </div>
