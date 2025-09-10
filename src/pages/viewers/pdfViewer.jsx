@@ -141,7 +141,7 @@ function PdfViewer() {
       <div
         className="viewer_controls"
         style={{
-          width: "80%",
+          width: "90%",
           opacity: controlsVisible ? 1 : 0,
           transition: "opacity 0.3s ease",
           // border: "2px solid red",
