@@ -45,6 +45,17 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(request.url);
   const isWhitelistedApi = WHITELISTED_ORIGINS.includes(url.origin);
   const isPdf = url.pathname.endsWith('.pdf') || url.searchParams.get('pdfUrl');
+  const isNavigate = request.mode === 'navigate' || (request.headers.get('accept') || '').includes('text/html');
+
+  // Navigation fallback: serve cached shell when offline
+  if (isNavigate && isSameOrigin(request.url)) {
+    event.respondWith(
+      caches.match('/index.html').then((cached) => {
+        return cached || fetch(request).catch(() => caches.match('/index.html'));
+      })
+    );
+    return;
+  }
 
   // Cache-first for PDFs (offline ready)
   if (isPdf) {
