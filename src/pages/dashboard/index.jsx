@@ -19,6 +19,7 @@ import {
   PlayCircleOutlineRounded,
   ShareOutlined,
 } from "@mui/icons-material";
+import { SearchOutlined, FilterListOutlined } from "@mui/icons-material";
 import { getDate } from "../../../bff/lib/utils";
 import { ClockCircleOutlined, EyeOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
@@ -38,6 +39,9 @@ const DashboardDefault = () => {
   const { actionRequest } = useGetApi();
   const devotionalRef = useRef();
   const [sermons, setSermons] = useState([]);
+  const [sermonSearch, setSermonSearch] = useState("");
+  const [speakerFilter, setSpeakerFilter] = useState("");
+  const [showSpeakerList, setShowSpeakerList] = useState(false);
   const [visibleCount, setVisibleCount] = useState(6);
   const loadMoreRef = useRef(null);
   const playersRef = useRef({});
@@ -50,8 +54,8 @@ const DashboardDefault = () => {
   useEffect(() => {
     actionRequest({
       endPoint: `${baseUrl}periodicals`,
-      cacheKey: 'periodicals',
-      strategy: 'cache-first',
+      cacheKey: "periodicals",
+      strategy: "cache-first",
       cacheTtlMs: 10 * 60 * 1000,
       onUpdate: (res) => {
         const p1 = res.data.find((t) => t.type == "p1");
@@ -60,7 +64,7 @@ const DashboardDefault = () => {
         setProphecy(p1);
         setPeriodicals(p2);
         setVop(p3);
-      }
+      },
     }).then((res) => {
       const p1 = res.data.find((t) => t.type == "p1");
       const p2 = res.data.find((t) => t.type == "p2");
@@ -70,6 +74,27 @@ const DashboardDefault = () => {
       setVop(p3);
     });
   }, []);
+
+  // derive unique speakers for filter
+  const speakers = Array.from(
+    new Set((sermons || []).map((s) => s.speaker).filter(Boolean))
+  );
+
+  // filtered sermons
+  const filteredSermons = (sermons || []).filter((sermon) => {
+    const matchesText = sermonSearch
+      ? (sermon.title || "")
+          .toLowerCase()
+          .includes(sermonSearch.toLowerCase()) ||
+        (sermon.speaker || "")
+          .toLowerCase()
+          .includes(sermonSearch.toLowerCase())
+      : true;
+    const matchesSpeaker = speakerFilter
+      ? sermon.speaker === speakerFilter
+      : true;
+    return matchesText && matchesSpeaker;
+  });
 
   useEffect(() => {
     console.log(playingId);
@@ -88,27 +113,35 @@ const DashboardDefault = () => {
   // Lazy load sermons JSON after paint to avoid blocking initial render
   useEffect(() => {
     let active = true;
-    const rif = (cb) => (window.requestIdleCallback ? window.requestIdleCallback(cb, { timeout: 1000 }) : setTimeout(cb, 0));
+    const rif = (cb) =>
+      window.requestIdleCallback
+        ? window.requestIdleCallback(cb, { timeout: 1000 })
+        : setTimeout(cb, 0);
     rif(async () => {
       try {
-        const mod = await import('../../assets/db/sermons.json');
+        const mod = await import("../../assets/db/sermons.json");
         if (active) setSermons(mod.default || []);
       } catch (_) {}
     });
-    return () => { active = false; };
+    return () => {
+      active = false;
+    };
   }, []);
 
   // Incrementally render more sermons when scrolled near the bottom
   useEffect(() => {
     if (!loadMoreRef.current) return;
     const el = loadMoreRef.current;
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          setVisibleCount((c) => Math.min(c + 6, sermons.length || c + 6));
-        }
-      });
-    }, { rootMargin: '200px' });
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setVisibleCount((c) => Math.min(c + 6, sermons.length || c + 6));
+          }
+        });
+      },
+      { rootMargin: "200px" }
+    );
     io.observe(el);
     return () => io.disconnect();
   }, [sermons.length]);
@@ -393,7 +426,15 @@ const DashboardDefault = () => {
                 <Suspense fallback={null}>
                   <AudioPlayer
                     sermonId={"mission"}
-                    refCallback={(el) => (playersRef.current["mission"] = el)}
+                    refCallback={(el) => {
+                      playersRef.current["mission"] = el;
+                      // Auto-play when the ref becomes available (first mount)
+                      if (el && playingId === "mission") {
+                        try {
+                          el.play();
+                        } catch {}
+                      }
+                    }}
                     src={
                       periodicals?.url ||
                       "https://adventband.org/bucket/sermons/a_major.mp3"
@@ -405,10 +446,11 @@ const DashboardDefault = () => {
             <div
               className="hs_2"
               style={{
-                height: playingId == "vop" && "fit-content",
+                // height: playingId == "vop" && "fit-content",
+                height: "fit-content",
               }}
             >
-              <div className="hs_2_holder">
+              <div className="hs_2_holder" style={{}}>
                 <div className="hs_2_left">
                   <p className="hs_2_p1">Voice Of Prophecy</p>
                   <br />
@@ -444,7 +486,14 @@ const DashboardDefault = () => {
                 <Suspense fallback={null}>
                   <AudioPlayer
                     sermonId={"vop"}
-                    refCallback={(el) => (playersRef.current["vop"] = el)}
+                    refCallback={(el) => {
+                      playersRef.current["vop"] = el;
+                      if (el && playingId === "vop") {
+                        try {
+                          el.play();
+                        } catch {}
+                      }
+                    }}
                     src={
                       vop?.url ||
                       "https://adventband.org/bucket/sermons/a_major.mp3"
@@ -458,7 +507,102 @@ const DashboardDefault = () => {
         <div className="d_content">
           <p className="dc_p1">Sermons</p>
 
-          {(sermons || []).slice(0, visibleCount).map((sermon, x) => {
+          {/* Sermon search + speaker filter */}
+          <div style={{ padding: "0 0 8px 0" }}>
+            <div
+              className="search"
+              style={{
+                width: "100%",
+                maxWidth: "680px",
+                position: "relative",
+                display: "flex",
+                alignItems: "center",
+                justifyContent:'flex-start'
+              }}
+            >
+              {/* Speaker filter trigger (left) */}
+              <div
+                onClick={() => setShowSpeakerList((v) => !v)}
+                title="Filter by speaker"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  height: "100%",
+                  padding: "0 8px",
+                  cursor: "pointer",
+                  marginRight:'5%'
+                }}
+              >
+                <FilterListOutlined />
+              </div>
+              <SearchOutlined />
+              <input
+                className="s_i"
+                placeholder="Search sermons (title or speaker)..."
+                value={sermonSearch}
+                onChange={(e) => setSermonSearch(e.target.value)}
+                aria-label="Search sermons"
+                style={{
+                  background: "transparent",
+                  width:'80%'
+                }}
+              />
+              {/* Simple flyout list */}
+              {showSpeakerList && (
+                <div
+                  style={{
+                    position: "absolute",
+                    left: 6,
+                    top: "110%",
+                    background:'#fff',
+                    border: "1px solid #e0e0e0",
+                    borderRadius: 8,
+                    boxShadow: "rgba(99, 99, 99, 0.2) 0px 2px 8px 0px",
+                    padding: 8,
+                    zIndex: 1000,
+                    minWidth: 220,
+                    maxHeight: 220,
+                    overflow: "auto",
+                  }}
+                >
+                  <div
+                    onClick={() => {
+                      setSpeakerFilter("");
+                      setShowSpeakerList(false);
+                    }}
+                    style={{
+                      padding: "6px 8px",
+                      fontSize: 12,
+                      cursor: "pointer",
+                      fontWeight: speakerFilter === "" ? 700 : 500,
+                    }}
+                  >
+                    All speakers
+                  </div>
+                  {speakers.map((sp) => (
+                    <div
+                      key={sp}
+                      onClick={() => {
+                        setSpeakerFilter(sp);
+                        setShowSpeakerList(false);
+                      }}
+                      style={{
+                        padding: "6px 8px",
+                        fontSize: 12,
+                        cursor: "pointer",
+                        fontWeight: speakerFilter === sp ? 700 : 500,
+                      }}
+                    >
+                      {sp}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {filteredSermons.slice(0, visibleCount).map((sermon, x) => {
             const isPlaying = playingId === sermon.id;
             let testAudios = [
               "https://adventband.org/bucket/sermons/test_audio.mp3",
@@ -501,7 +645,14 @@ const DashboardDefault = () => {
                   <Suspense fallback={null}>
                     <AudioPlayer
                       sermonId={sermon.id}
-                      refCallback={(el) => (playersRef.current[sermon.id] = el)}
+                      refCallback={(el) => {
+                        playersRef.current[sermon.id] = el;
+                        if (el && playingId === sermon.id) {
+                          try {
+                            el.play();
+                          } catch {}
+                        }
+                      }}
                       src={sermon.link}
                     />
                   </Suspense>

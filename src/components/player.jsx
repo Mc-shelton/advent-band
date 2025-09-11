@@ -6,23 +6,31 @@ function AudioPlayer({ sermonId, refCallback, src }) {
   
     useEffect(() => {
       const audio = audioRef.current;
+      if (!audio) return;
+      // Help first-play succeed: start muted, then unmute on first play
+      audio.muted = true;
+      const handleFirstPlay = () => { audio.muted = false; audio.removeEventListener('play', handleFirstPlay); };
+      audio.addEventListener('play', handleFirstPlay);
+
+      // Expose ref to parent
       refCallback(audio);
-  
+
       const updateProgress = () => {
         if (audio && audio.duration) {
           setProgress((audio.currentTime / audio.duration) * 100);
         }
       };
-  
+
       audio.addEventListener("timeupdate", updateProgress);
       return () => {
         audio.removeEventListener("timeupdate", updateProgress);
+        audio.removeEventListener('play', handleFirstPlay);
       };
     }, [refCallback]);
   
     return (
       <div className="player_cont">
-        <audio ref={audioRef} src={src} loop/>
+        <audio ref={audioRef} src={src} loop playsInline preload="auto" />
         <input
           type="range"
           min={0}
