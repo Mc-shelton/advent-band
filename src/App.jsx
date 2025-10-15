@@ -20,6 +20,9 @@ function App() {
   const { actionRequest: actionPostRequest } = usePostApi();
   const [loading, setLoading] = useState(true);
   useEffect(() => {
+    console.info('[offline-debug] App mounted, starting boot sequence');
+  }, []);
+  useEffect(() => {
     const token = Cookie.get("auth_token");
     if (!token) return;
     try{

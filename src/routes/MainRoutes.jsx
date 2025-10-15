@@ -1,28 +1,39 @@
-import { lazy } from 'react';
-
 // project import
 import Loadable from '@/components/Loadable';
 import MainLayout from '../layout/MainLayout';
 
-// Lazy loaded pages
-const DashboardDefault = Loadable(lazy(() => import('../pages/dashboard')));
-const Auth = Loadable(lazy(() => import('../pages/authentication/auth')));
-const AuthLogin = Loadable(lazy(() => import('../pages/authentication/login')));
-const Hymns = Loadable(lazy(() => import('../pages/hymns')));
-const Bible = Loadable(lazy(() => import('../pages/bible')));
-const Discover = Loadable(lazy(() => import('../pages/discover')));
-const Remedies = Loadable(lazy(() => import('../pages/discover/remedies')));
-const Community = Loadable(lazy(() => import('../pages/community')));
-const Estate = Loadable(lazy(() => import('../pages/estate')));
-const PdfViewer = Loadable(lazy(() => import('../pages/viewers/pdfViewer')));
-const LessonBooks = Loadable(lazy(() => import('../pages/estate/lessons')));
-const Uploader = Loadable(lazy(() => import('../pages/loader')));
-const EpubReader = Loadable(lazy(() => import('../pages/viewers/epubViewer')));
-const FolderBooks = Loadable(lazy(() => import('../pages/estate/egw')));
-const EgwViewer = Loadable(lazy(() => import('../pages/viewers/egwViewer')));
-// render - dashboard
-// const DashboardDefault = Loadable(lazy(() => import('@/pages/dashboard')));
-// const LoginScreen = Loadable(lazy(() => import('@/pages/authentication/login/index.jsx')));
+// Statically imported pages to support offline bundle
+import DashboardPage from '../pages/dashboard';
+import AuthPage from '../pages/authentication/auth';
+import AuthLoginPage from '../pages/authentication/login';
+import HymnsPage from '../pages/hymns';
+import BiblePage from '../pages/bible';
+import DiscoverPage from '../pages/discover';
+import RemediesPage from '../pages/discover/remedies';
+import CommunityPage from '../pages/community';
+import EstatePage from '../pages/estate';
+import PdfViewerPage from '../pages/viewers/pdfViewer';
+import LessonBooksPage from '../pages/estate/lessons';
+import UploaderPage from '../pages/loader';
+import EpubReaderPage from '../pages/viewers/epubViewer';
+import FolderBooksPage from '../pages/estate/egw';
+import EgwViewerPage from '../pages/viewers/egwViewer';
+
+const DashboardDefault = Loadable(DashboardPage);
+const Auth = Loadable(AuthPage);
+const AuthLogin = Loadable(AuthLoginPage);
+const Hymns = Loadable(HymnsPage);
+const Bible = Loadable(BiblePage);
+const Discover = Loadable(DiscoverPage);
+const Remedies = Loadable(RemediesPage);
+const Community = Loadable(CommunityPage);
+const Estate = Loadable(EstatePage);
+const PdfViewer = Loadable(PdfViewerPage);
+const LessonBooks = Loadable(LessonBooksPage);
+const Uploader = Loadable(UploaderPage);
+const EpubReader = Loadable(EpubReaderPage);
+const FolderBooks = Loadable(FolderBooksPage);
+const EgwViewer = Loadable(EgwViewerPage);
 
 // ==============================|| MAIN ROUTING ||============================== //
 

@@ -1,7 +1,7 @@
 import CButton from "../../components/buttton";
 import "../../assets/styles/global.css";
 import "../../assets/styles/dashboard.css";
-import { lazy, Suspense, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ElectricMeterOutlinedIcon from "@mui/icons-material/ElectricMeterOutlined";
 import AttractionsOutlinedIcon from "@mui/icons-material/AttractionsOutlined";
 import BoltIcon from "@mui/icons-material/Bolt";
@@ -25,7 +25,8 @@ import { ClockCircleOutlined, EyeOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import PdfViewer from "../viewers/pdfViewer";
 import { baseUrl, useGetApi } from "../../../bff/hooks";
-const AudioPlayer = lazy(() => import("../../components/player"));
+import AudioPlayer from "../../components/player";
+import sermonsData from "../../assets/db/sermons.json";
 // Defer loading sermons data to avoid blocking route load on mobile
 
 const DashboardDefault = () => {
@@ -117,11 +118,8 @@ const DashboardDefault = () => {
       window.requestIdleCallback
         ? window.requestIdleCallback(cb, { timeout: 1000 })
         : setTimeout(cb, 0);
-    rif(async () => {
-      try {
-        const mod = await import("../../assets/db/sermons.json");
-        if (active) setSermons(mod.default || []);
-      } catch (_) {}
+    rif(() => {
+      if (active) setSermons((sermonsData && sermonsData.default) || sermonsData || []);
     });
     return () => {
       active = false;
@@ -248,7 +246,10 @@ const DashboardDefault = () => {
             )}
           </div>
         </div>
-        <div>
+        <div style={{
+          // border:'2px solid red',
+          marginRight:'10px'
+        }}>
           <CButton
             text={
               gHead.user
@@ -423,24 +424,22 @@ const DashboardDefault = () => {
                 </div>
               </div>
               {playingId == "mission" && (
-                <Suspense fallback={null}>
-                  <AudioPlayer
-                    sermonId={"mission"}
-                    refCallback={(el) => {
-                      playersRef.current["mission"] = el;
-                      // Auto-play when the ref becomes available (first mount)
-                      if (el && playingId === "mission") {
-                        try {
-                          el.play();
-                        } catch {}
-                      }
-                    }}
-                    src={
-                      periodicals?.url ||
-                      "https://adventband.org/bucket/sermons/a_major.mp3"
+                <AudioPlayer
+                  sermonId={"mission"}
+                  refCallback={(el) => {
+                    playersRef.current["mission"] = el;
+                    // Auto-play when the ref becomes available (first mount)
+                    if (el && playingId === "mission") {
+                      try {
+                        el.play();
+                      } catch {}
                     }
-                  />
-                </Suspense>
+                  }}
+                  src={
+                    periodicals?.url ||
+                    "https://adventband.org/bucket/sermons/a_major.mp3"
+                  }
+                />
               )}
             </div>
             <div
@@ -483,23 +482,21 @@ const DashboardDefault = () => {
                 </div>
               </div>
               {playingId == "vop" && (
-                <Suspense fallback={null}>
-                  <AudioPlayer
-                    sermonId={"vop"}
-                    refCallback={(el) => {
-                      playersRef.current["vop"] = el;
-                      if (el && playingId === "vop") {
-                        try {
-                          el.play();
-                        } catch {}
-                      }
-                    }}
-                    src={
-                      vop?.url ||
-                      "https://adventband.org/bucket/sermons/a_major.mp3"
+                <AudioPlayer
+                  sermonId={"vop"}
+                  refCallback={(el) => {
+                    playersRef.current["vop"] = el;
+                    if (el && playingId === "vop") {
+                      try {
+                        el.play();
+                      } catch {}
                     }
-                  />
-                </Suspense>
+                  }}
+                  src={
+                    vop?.url ||
+                    "https://adventband.org/bucket/sermons/a_major.mp3"
+                  }
+                />
               )}
             </div>
           </div>
@@ -642,20 +639,18 @@ const DashboardDefault = () => {
                   </div>
                 </div>
                 {isPlaying && (
-                  <Suspense fallback={null}>
-                    <AudioPlayer
-                      sermonId={sermon.id}
-                      refCallback={(el) => {
-                        playersRef.current[sermon.id] = el;
-                        if (el && playingId === sermon.id) {
-                          try {
-                            el.play();
-                          } catch {}
-                        }
-                      }}
-                      src={sermon.link}
-                    />
-                  </Suspense>
+                  <AudioPlayer
+                    sermonId={sermon.id}
+                    refCallback={(el) => {
+                      playersRef.current[sermon.id] = el;
+                      if (el && playingId === sermon.id) {
+                        try {
+                          el.play();
+                        } catch {}
+                      }
+                    }}
+                    src={sermon.link}
+                  />
                 )}
               </div>
             );

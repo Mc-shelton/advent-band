@@ -1,61 +1,54 @@
-import { StrictMode, Suspense, lazy } from 'react'
+import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
-import { BrowserRouter } from 'react-router-dom'
+import { BrowserRouter, HashRouter } from 'react-router-dom'
 import { GirafProvider } from './giraf/index'
 import ErrorBoundary from './components/ErrorBoundary'
 
-// Lazy load App component
-const App = lazy(() => import('./App.jsx'))
+import App from './App.jsx'
+
+const resolveBasename = () => {
+  if (typeof window === 'undefined') {
+    return import.meta.env.BASE_URL || '/'
+  }
+
+  if (window.location.protocol === 'file:') {
+    return '/'
+  }
+
+  const { pathname } = window.location
+  if (pathname.endsWith('/index.html')) {
+    const rawBase = pathname.slice(0, -'index.html'.length) || '/'
+    const withLeading = rawBase.startsWith('/') ? rawBase : `/${rawBase}`
+    const sanitizedBase = withLeading.length > 1 ? withLeading.replace(/\/+$/, '') : withLeading
+
+    if (window.location.protocol !== 'file:' || typeof window.history?.replaceState === 'function') {
+      try {
+        const normalized = sanitizedBase.endsWith('/') ? sanitizedBase : `${sanitizedBase}/`
+        window.history.replaceState(null, '', normalized)
+      } catch {
+        // ignore history errors
+      }
+    }
+    return sanitizedBase || '/'
+  }
+
+  return import.meta.env.BASE_URL || '/'
+}
+
+const isFileProtocol =
+  typeof window !== 'undefined' && window.location?.protocol === 'file:'
+const RouterComponent = isFileProtocol ? HashRouter : BrowserRouter
+const basename = isFileProtocol ? undefined : resolveBasename()
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <BrowserRouter basename="/">
+    <RouterComponent basename={basename}>
       <GirafProvider>
-        <Suspense fallback={<div style={{
-          display:'flex',
-          height:'100%',
-          width:"100%",
-          justifyContent:'center',
-          alignItems:'center',
-          color:'black',
-          fontSize:'12px'
-        }}>Loading app...</div>}>
-          <ErrorBoundary>
-            <App />
-          </ErrorBoundary>
-        </Suspense>
+        <ErrorBoundary>
+          <App />
+        </ErrorBoundary>
       </GirafProvider>
-    </BrowserRouter>
-  </StrictMode>,
+    </RouterComponent>
+  </StrictMode>
 )
-
-// const Root = () => {
-//   return (
-//     <Suspense fallback={<div>Loading Components...</div>}>
-//       <BrowserRouter>
-//         <GirafProvider>
-//           <App />
-//         </GirafProvider>
-//       </BrowserRouter>
-//     </Suspense>
-//   );
-// };
-
-// createRoot(document.getElementById('root')).render(
-//   <StrictMode>
-//     <Root />
-//   </StrictMode>
-// );
-// Global runtime error logging to catch silent failures
-if (typeof window !== 'undefined') {
-  window.addEventListener('error', (e) => {
-    // Avoid noisy logs from passive network errors
-    // eslint-disable-next-line no-console
-    console.error('[GlobalError]', e?.error || e?.message, e?.filename, e?.lineno, e?.colno, e?.error?.stack)
-  });
-  window.addEventListener('unhandledrejection', (e) => {
-    // eslint-disable-next-line no-console
-    console.error('[UnhandledRejection]', e?.reason);
-  });
-}

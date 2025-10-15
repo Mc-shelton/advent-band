@@ -4,8 +4,12 @@ import path from 'path'
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: './',
   plugins: [react()],
   assetsInclude: ['**/*.epub'],
+  build: {
+    manifest: true
+  },
   resolve: {
     dedupe: ['react', 'react-dom'],
     alias: [

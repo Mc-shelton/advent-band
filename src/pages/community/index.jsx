@@ -78,14 +78,17 @@ const Community = () => {
             </p>}
           </div>
         </div>
-        <div>
+        <div style={{
+          // border:'2px solid red',
+          marginRight:'10px'
+        }}>
           <CButton
             text={
               gHead.user
                 ? gHead.user.name
                   ? gHead.user.name[0]
                   : gHead.user.email[0]
-                : "Sign In"
+                : "Sign In" 
             }
             onClick={() => {
               addGHead("login", true);
