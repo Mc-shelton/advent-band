@@ -124,6 +124,7 @@ const Community = () => {
                     addGHead('prev_view_key', undefined);
                     addGHead('prev_view_value', undefined);
                   }
+                  // console.log()
                 }catch(e){/* noop */}
               }}
               style={{
