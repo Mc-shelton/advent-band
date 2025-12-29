@@ -32,6 +32,7 @@ const resolveBasename = () => {
     }
     return sanitizedBase || '/'
   }
+  // comment for deployment
 
   return import.meta.env.BASE_URL || '/'
 }
