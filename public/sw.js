@@ -1,7 +1,8 @@
 // Simple service worker for caching static assets and GET requests
-const STATIC_CACHE = 'static-v5';
-const API_CACHE = 'api-v3';
-const PDF_CACHE = 'pdf-v1';
+// Bump versions to force reload of stale bundles after recent UI changes.
+const STATIC_CACHE = 'static-v6';
+const API_CACHE = 'api-v4';
+const PDF_CACHE = 'pdf-v2';
 const STATIC_ASSETS = [
   './',
   './index.html',
