@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import egwLogo from '../../assets/images/egw_logo.png'
 import pioneers from '../../assets/images/pioneers.jpeg'
 import testPdf from '../../assets/testData/test.pdf'
+import { maybeUpdateServiceWorker } from '@/lib/swUpdate';
 
 const Estate = () => {
   const { gHead, addGHead } = useGiraf();
@@ -37,6 +38,9 @@ const Estate = () => {
 
   const navigate = useNavigate();
   useEffect(() => {
+    // Best-effort SW update when user opens Estate tab; non-blocking.
+    maybeUpdateServiceWorker();
+
     setLoading(true);
     actionRequest({
       endPoint: `${baseUrl}estate/pioneers`,
@@ -144,6 +148,7 @@ const Estate = () => {
 
   const saveAbcItem = async (item) => {
     const url = item?.url; if (!url) return;
+    maybeUpdateServiceWorker();
     setAbcSaving((s)=>({ ...s, [url]: true }));
     try{
       const ok = await cachePdf(url);
@@ -154,6 +159,7 @@ const Estate = () => {
   };
 
   const startAbcDownload = async () => {
+    maybeUpdateServiceWorker();
     const ctrl = createWarmupController();
     warmRefAbc.current = ctrl;
     const sess = { active:true, paused:false, current:0, total:0, label:'Preparing library…' };
