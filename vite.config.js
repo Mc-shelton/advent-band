@@ -4,7 +4,9 @@ import path from 'path'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: './',
+  // Use absolute base for dev & prod; relative base can cause module
+  // requests to be rewritten to HTML (wrong MIME) when served by a dev proxy.
+  base: '/',
   plugins: [react()],
   assetsInclude: ['**/*.epub'],
   build: {

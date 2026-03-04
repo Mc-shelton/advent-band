@@ -27,6 +27,8 @@ const Estate = () => {
   const [pioneer, setPioneer] = useState([])
   // ABC Library download session
   const [dlAbc, setDlAbc] = useState({ active:false, current:0, total:0, label:'', paused:false });
+  const [abcSaving, setAbcSaving] = useState({}); // url => bool
+  const [abcSaved, setAbcSaved] = useState({});   // url => bool
   const warmRefAbc = useRef(null);
   const SESSION_ABC = 'abcLibraryDl';
   const saveAbc = (s)=>{ try{ localStorage.setItem(SESSION_ABC, JSON.stringify(s)); }catch{} };
@@ -118,6 +120,39 @@ const Estate = () => {
   // Resume ABC library download if present
   useEffect(()=>{ const s = loadAbc(); if (s?.active) setDlAbc(s); },[])
 
+  // Track which ABC items are already cached offline
+  useEffect(()=> {
+    const m = {};
+    (library || []).forEach((t)=> {
+      const u = t?.url;
+      if (u && localStorage.getItem(`abcSaved:${u}`)==='1') m[u]=true;
+    });
+    setAbcSaved(m);
+  }, [library]);
+
+  const cachePdf = async (url) => {
+    try{
+      const cache = await caches.open('pdf-v1');
+      const req = new Request(url, { mode:'cors' });
+      const match = await cache.match(req);
+      if (match) return true;
+      const resp = await fetch(req);
+      if (resp && resp.ok) await cache.put(req, resp.clone());
+      return true;
+    }catch{ return false; }
+  };
+
+  const saveAbcItem = async (item) => {
+    const url = item?.url; if (!url) return;
+    setAbcSaving((s)=>({ ...s, [url]: true }));
+    try{
+      const ok = await cachePdf(url);
+      if (ok){ localStorage.setItem(`abcSaved:${url}`, '1'); setAbcSaved((s)=>({ ...s, [url]: true })); }
+    } finally {
+      setAbcSaving((s)=>({ ...s, [url]: false }));
+    }
+  };
+
   const startAbcDownload = async () => {
     const ctrl = createWarmupController();
     warmRefAbc.current = ctrl;
@@ -131,6 +166,25 @@ const Estate = () => {
   const pauseAbc = ()=>{ const c = warmRefAbc.current; if (!c) return; c.pause(); setDlAbc((d)=>{ const nd={...d, paused:true}; saveAbc(nd); return nd; }); };
   const resumeAbc = ()=>{ const c = warmRefAbc.current; if (c) { c.resume(); setDlAbc((d)=>{ const nd={...d, paused:false}; saveAbc(nd); return nd; }); return; } startAbcDownload(); };
   const cancelAbc = ()=>{ const c = warmRefAbc.current; if (c) c.cancel(); clearAbc(); setDlAbc({ active:false, current:0, total:0, label:'', paused:false }); };
+
+  const snippet = (text, words = 20) => {
+    if (!text) return null;
+    const str = String(text).trim();
+    // Split into sentences; keep punctuation.
+    const sentences = str.match(/[^.!?]*[.!?]/g);
+    const pick = sentences && sentences.length ? sentences[sentences.length - 1].trim() : str;
+    const parts = pick.split(/\s+/).filter(Boolean);
+    if (parts.length <= words) return parts.join(' ');
+    return parts.slice(0, words).join(' ') + '…';
+  };
+
+  const toTitleCase = (text) => {
+    if (!text) return '';
+    return String(text)
+      .split(/\s+/)
+      .map((w) => (w ? w[0].toUpperCase() + w.slice(1).toLowerCase() : ''))
+      .join(' ');
+  };
 
   return (
     <div className="nav_page estate">
@@ -263,7 +317,7 @@ const Estate = () => {
                     src={egwLogo}
                   />
                   <div className="est_side_lister_item_text">
-                    <p className="est_side_lister_item_text_hd">{item.title}</p>
+                    <p className="est_side_lister_item_text_hd">{toTitleCase(item.title)}</p>
                     <p className="est_side_lister_item_text_sub">
                       {item.urltype} : EGW {item.addClass}
                     </p>
@@ -375,7 +429,7 @@ const Estate = () => {
                 />
                 <div className="est_side_lister_item_text">
                   <p className="est_side_lister_item_text_hd">
-                    {item.title}
+                    {toTitleCase(item.title)}
                   </p>
                   <p className="est_side_lister_item_text_sub">
                     {item.urltype}
@@ -480,14 +534,24 @@ const Estate = () => {
               >
                 <LazyBg
                   className="est_side_lister_item_img"
-                  src={item.cover || testImage}
+                  src={item.image || testImage}
                 />
                 <div className="est_side_lister_item_text">
-                  <p className="est_side_lister_item_text_hd">{item.title}</p>
+                  <p className="est_side_lister_item_text_hd">{toTitleCase(item.title)}</p>
                   <p className="est_side_lister_item_text_sub">
                     By : {item.author}
                   </p>
-                  <div style={{ marginTop: 6 }}>
+                  { (item.pages || item.page_count || item.pageCount) && (
+                    <p className="est_side_lister_item_text_sub">
+                      Pgs: {item.pages || item.page_count || item.pageCount} 
+                    </p>
+                  )}
+                  { snippet(item.description) && (
+                    <p className="est_side_lister_item_text_sub" style={{ marginTop: 4 }}>
+                      {snippet(item.description)}
+                    </p>
+                  )}
+                  <div style={{ marginTop: 6, display:'flex', justifyContent:'flex-start' }}>
                     <button
                       onClick={(e)=>{ e.stopPropagation(); saveAbcItem(item); }}
                       disabled={!!abcSaving[item.url] || !!abcSaved[item.url]}
@@ -601,7 +665,7 @@ const Estate = () => {
                     src={item.cover}
                   />
                   <div className="est_side_lister_item_text">
-                    <p className="est_side_lister_item_text_hd">{item.title}</p>
+                    <p className="est_side_lister_item_text_hd">{toTitleCase(item.title)}</p>
                     <p className="est_side_lister_item_text_sub">
                       {item.path.split("/").join(" ")}
                     </p>
